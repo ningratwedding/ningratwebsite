@@ -208,7 +208,7 @@ export default function EditStoryPage() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const { setPageTitle } = useContext(AdminTitleContext)!;
-  const [isFileManagerOpen, setIsFileManagerOpen]_ = useState(false);
+  const [isFileManagerOpen, setIsFileManagerOpen] = useState(false);
   const [selectionTarget, setSelectionTarget] = useState<{ blockId: string, maxFiles: number } | 'hero' | 'audio' | null>(null);
 
    useEffect(() => {
