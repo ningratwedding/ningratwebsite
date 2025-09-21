@@ -157,7 +157,7 @@ export default function ServicesPage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {settings.packages.map((pkg, index) => (
-              <Card key={pkg.id || index} className={`flex flex-col bg-transparent ${pkg.highlight ? 'border-primary' : 'border-gray-200'}`}>
+              <Card key={pkg.id || index} className={`flex flex-col bg-transparent rounded-none ${pkg.highlight ? 'border-primary' : 'border-gray-200'}`}>
                 <CardHeader className="text-center">
                   <CardTitle className="text-2xl font-headline">{pkg.name}</CardTitle>
                   <CardDescription className="text-3xl font-bold text-primary mt-2">{pkg.price}</CardDescription>
