@@ -6,11 +6,12 @@ import { db } from '@/lib/firebase';
 import { collection, getDocs, query, orderBy, Timestamp } from 'firebase/firestore';
 import { useToast } from "@/hooks/use-toast";
 import { AdminTitleContext } from '@/contexts/AdminTitleContext';
-import { format } from 'date-fns';
+import { format, isWithinInterval, startOfDay, endOfDay } from 'date-fns';
 import { id } from 'date-fns/locale';
 import Link from 'next/link';
 import { getInboxSettings, saveInboxSettings } from '@/lib/actions';
 import FileManagerDialog from "@/components/file-manager-dialog";
+import { DateRange } from "react-day-picker";
 
 import {
   Card,
@@ -27,12 +28,19 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { Loader2, File as FileIcon, X, Library } from 'lucide-react';
+import { Calendar } from '@/components/ui/calendar';
+import { Loader2, File as FileIcon, X, Library, Calendar as CalendarIcon } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 
 interface Submission {
@@ -67,6 +75,7 @@ export default function AdminInboxPage() {
   const [isFileManagerOpen, setIsFileManagerOpen] = useState(false);
   const { setPageTitle } = useContext(AdminTitleContext)!;
   const [searchTerm, setSearchTerm] = useState("");
+  const [date, setDate] = useState<DateRange | undefined>(undefined)
 
 
   useEffect(() => {
@@ -153,12 +162,23 @@ export default function AdminInboxPage() {
     return `https://wa.me/${formattedNumber}?text=${encodedMessage}`;
   };
   
-  const filteredSubmissions = submissions.filter(sub => 
-    sub.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    sub.eventType.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    sub.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    sub.whatsapp.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredSubmissions = submissions.filter(sub => {
+    const searchMatch = (
+        sub.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        sub.eventType.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        sub.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        sub.whatsapp.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    const dateMatch = (
+        !date ||
+        (sub.submittedAt && date.from && !date.to && sub.submittedAt.toDate() >= startOfDay(date.from)) ||
+        (sub.submittedAt && date.from && date.to && isWithinInterval(sub.submittedAt.toDate(), { start: startOfDay(date.from), end: endOfDay(date.to) }))
+    );
+
+    return searchMatch && dateMatch;
+  });
+
 
 
   if (loading) {
@@ -258,13 +278,50 @@ export default function AdminInboxPage() {
                       Lihat semua pesan yang dikirim melalui formulir kontak Anda.
                     </CardDescription>
                 </div>
-                <div className="relative w-full sm:max-w-xs">
+                 <div className="flex items-center gap-2">
                     <Input 
                         placeholder="Cari pesan..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full sm:max-w-xs"
                     />
-                </div>
+                    <Popover>
+                        <PopoverTrigger asChild>
+                        <Button
+                            id="date"
+                            variant={"outline"}
+                            className={cn(
+                            "w-[300px] justify-start text-left font-normal",
+                            !date && "text-muted-foreground"
+                            )}
+                        >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {date?.from ? (
+                            date.to ? (
+                                <>
+                                {format(date.from, "LLL dd, y")} -{" "}
+                                {format(date.to, "LLL dd, y")}
+                                </>
+                            ) : (
+                                format(date.from, "LLL dd, y")
+                            )
+                            ) : (
+                            <span>Pilih tanggal</span>
+                            )}
+                        </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="end">
+                        <Calendar
+                            initialFocus
+                            mode="range"
+                            defaultMonth={date?.from}
+                            selected={date}
+                            onSelect={setDate}
+                            numberOfMonths={2}
+                        />
+                        </PopoverContent>
+                    </Popover>
+                 </div>
             </div>
         </CardHeader>
         <CardContent>
@@ -301,7 +358,7 @@ export default function AdminInboxPage() {
               )) : (
                 <TableRow>
                     <TableCell colSpan={6} className="h-24 text-center">
-                        {searchTerm ? "Tidak ada pesan yang cocok dengan pencarian Anda." : "Belum ada pesan masuk."}
+                        {searchTerm || date ? "Tidak ada pesan yang cocok dengan filter Anda." : "Belum ada pesan masuk."}
                     </TableCell>
                 </TableRow>
               )}
