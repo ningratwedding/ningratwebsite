@@ -41,6 +41,7 @@ import { Input } from '@/components/ui/input';
 import { Calendar } from '@/components/ui/calendar';
 import { Loader2, File as FileIcon, X, Library, Calendar as CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 
 interface Submission {
@@ -218,57 +219,62 @@ export default function AdminInboxPage() {
         onFileSelect={handleFileSelect}
     />
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Templat Pesan WhatsApp</CardTitle>
-          <CardDescription>
-            Atur pesan otomatis. Gunakan `[nama]` untuk nama klien dan `[file]` untuk tautan lampiran.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="whatsapp-template">Templat Pesan</Label>
-            <Textarea 
-              id="whatsapp-template"
-              placeholder="Contoh: Halo [nama], terima kasih telah menghubungi. Berikut katalog kami: [file]"
-              value={whatsappTemplate}
-              onChange={(e) => setWhatsappTemplate(e.target.value)}
-              className="min-h-[150px]"
-              disabled={isSaving}
-            />
-          </div>
+      <Accordion type="single" collapsible className="w-full">
+        <AccordionItem value="item-1">
+          <AccordionTrigger className="text-lg font-semibold px-6 py-4 bg-card rounded-t-lg border">
+              Templat Pesan WhatsApp
+          </AccordionTrigger>
+          <AccordionContent className="bg-card p-6 rounded-b-lg border-x border-b">
+              <CardDescription className="mb-4">
+                Atur pesan otomatis. Gunakan `[nama]` untuk nama klien dan `[file]` untuk tautan lampiran.
+              </CardDescription>
+              <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="whatsapp-template">Templat Pesan</Label>
+                <Textarea 
+                  id="whatsapp-template"
+                  placeholder="Contoh: Halo [nama], terima kasih telah menghubungi. Berikut katalog kami: [file]"
+                  value={whatsappTemplate}
+                  onChange={(e) => setWhatsappTemplate(e.target.value)}
+                  className="min-h-[150px]"
+                  disabled={isSaving}
+                />
+              </div>
 
-          <div className="space-y-2">
-            <Label>Lampiran File</Label>
-            {templateFileUrl ? (
-                <div className="flex items-center justify-between rounded-md border p-3">
-                    <div className="flex items-center gap-2">
-                        <FileIcon className="h-5 w-5 text-muted-foreground" />
-                        <span className="text-sm text-muted-foreground truncate max-w-xs">
-                            {templateFileUrl.split('/').pop()}
-                        </span>
+              <div className="space-y-2">
+                <Label>Lampiran File</Label>
+                {templateFileUrl ? (
+                    <div className="flex items-center justify-between rounded-md border p-3">
+                        <div className="flex items-center gap-2">
+                            <FileIcon className="h-5 w-5 text-muted-foreground" />
+                            <span className="text-sm text-muted-foreground truncate max-w-xs">
+                                {templateFileUrl.split('/').pop()}
+                            </span>
+                        </div>
+                        <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setTemplateFileUrl(null)}>
+                            <X className="h-4 w-4" />
+                        </Button>
                     </div>
-                    <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setTemplateFileUrl(null)}>
-                        <X className="h-4 w-4" />
-                    </Button>
-                </div>
-            ) : (
-                 <Button variant="outline" onClick={() => setIsFileManagerOpen(true)} disabled={isSaving}>
-                    <Library className="mr-2 h-4 w-4" />
-                    Pilih File Lampiran
-                 </Button>
-            )}
-            <p className="text-xs text-muted-foreground">
-              Opsional: Pilih file untuk disertakan sebagai tautan dalam templat.
-            </p>
-          </div>
-          
-          <Button onClick={handleSaveTemplate} disabled={isSaving}>
-            {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Simpan Templat
-          </Button>
-        </CardContent>
-      </Card>
+                ) : (
+                     <Button variant="outline" onClick={() => setIsFileManagerOpen(true)} disabled={isSaving}>
+                        <Library className="mr-2 h-4 w-4" />
+                        Pilih File Lampiran
+                     </Button>
+                )}
+                <p className="text-xs text-muted-foreground">
+                  Opsional: Pilih file untuk disertakan sebagai tautan dalam templat.
+                </p>
+              </div>
+              
+              <Button onClick={handleSaveTemplate} disabled={isSaving}>
+                {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Simpan Templat
+              </Button>
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+
       <Card>
         <CardHeader>
             <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
@@ -370,3 +376,5 @@ export default function AdminInboxPage() {
     </>
   );
 }
+
+    
