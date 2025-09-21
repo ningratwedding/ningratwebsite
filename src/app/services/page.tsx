@@ -131,7 +131,7 @@ export default function ServicesPage() {
                     <AccordionContent className="pt-4">
                         <div className="grid md:grid-cols-3 gap-6 items-center">
                             {moment.imageUrl && (
-                                <div className="relative aspect-[4/3] rounded-lg overflow-hidden md:col-span-1">
+                                <div className="relative aspect-[4/3] overflow-hidden md:col-span-1">
                                     <Image src={moment.imageUrl} alt={moment.title} fill className="object-cover" />
                                 </div>
                             )}
