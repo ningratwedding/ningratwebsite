@@ -94,9 +94,8 @@ export default function ContactForm() {
             className="space-y-6"
             onSubmit={(evt) => {
                 form.handleSubmit(() => {
-                    // This will be called on successful validation
+                    // This will be called on successful validation, allowing the native form action to proceed.
                 })(evt);
-                // The native form submission will happen via the 'action' prop
             }}
         >
           <CardContent className="space-y-6 p-0">
