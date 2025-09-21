@@ -9,6 +9,8 @@ import { AdminTitleContext } from '@/contexts/AdminTitleContext';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
 import Link from 'next/link';
+import { getInboxSettings, saveInboxSettings } from '@/lib/actions';
+
 import {
   Card,
   CardContent,
@@ -26,6 +28,10 @@ import {
 } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Loader2 } from 'lucide-react';
+
 
 interface Submission {
   id: string;
@@ -53,6 +59,8 @@ export default function AdminInboxPage() {
   const { toast } = useToast();
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [whatsappTemplate, setWhatsappTemplate] = useState("");
   const { setPageTitle } = useContext(AdminTitleContext)!;
 
   useEffect(() => {
@@ -60,18 +68,25 @@ export default function AdminInboxPage() {
   }, [setPageTitle]);
 
   useEffect(() => {
-    const fetchSubmissions = async () => {
+    const fetchPageData = async () => {
       setLoading(true);
       try {
-        const submissionsCollection = collection(db, 'contactSubmissions');
-        const q = query(submissionsCollection, orderBy('submittedAt', 'desc'));
-        const querySnapshot = await getDocs(q);
-        const subsList = querySnapshot.docs.map(
+        const [submissionsSnapshot, settings] = await Promise.all([
+           getDocs(query(collection(db, 'contactSubmissions'), orderBy('submittedAt', 'desc'))),
+           getInboxSettings()
+        ]);
+
+        const subsList = submissionsSnapshot.docs.map(
           (doc) => ({ id: doc.id, ...doc.data() } as Submission)
         );
         setSubmissions(subsList);
+        
+        if(settings?.whatsappTemplate) {
+            setWhatsappTemplate(settings.whatsappTemplate);
+        }
+
       } catch (error) {
-        console.error('Gagal mengambil pesan masuk: ', error);
+        console.error('Gagal mengambil data halaman pesan masuk: ', error);
         toast({
             title: "Error",
             description: "Gagal mengambil data pesan masuk.",
@@ -82,21 +97,57 @@ export default function AdminInboxPage() {
       }
     };
 
-    fetchSubmissions();
+    fetchPageData();
   }, [toast]);
 
-  const formatWhatsappUrl = (number: string) => {
+  const handleSaveTemplate = async () => {
+    setIsSaving(true);
+    try {
+        const result = await saveInboxSettings({ whatsappTemplate });
+        if (result.success) {
+            toast({
+                title: "Sukses!",
+                description: "Templat pesan WhatsApp telah disimpan."
+            });
+        } else {
+            throw new Error(result.message || "Gagal menyimpan templat.");
+        }
+    } catch (error: any) {
+        toast({
+            title: "Error",
+            description: error.message,
+            variant: "destructive"
+        });
+    } finally {
+        setIsSaving(false);
+    }
+  }
+
+  const formatWhatsappUrl = (number: string, name: string) => {
     let formattedNumber = number.replace(/[^0-9]/g, '');
     if (formattedNumber.startsWith('0')) {
       formattedNumber = '62' + formattedNumber.substring(1);
     }
-    return `https://wa.me/${formattedNumber}`;
+
+    const message = whatsappTemplate.replace(/\[nama\]/g, name);
+    const encodedMessage = encodeURIComponent(message);
+    
+    return `https://wa.me/${formattedNumber}?text=${encodedMessage}`;
   };
 
 
   if (loading) {
     return (
       <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
+         <Card>
+            <CardHeader><Skeleton className="h-6 w-56" /></CardHeader>
+            <CardContent>
+                <div className="space-y-2">
+                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-20 w-full" />
+                </div>
+            </CardContent>
+         </Card>
         <Card>
           <CardHeader>
             <Skeleton className="h-6 w-48" />
@@ -116,6 +167,31 @@ export default function AdminInboxPage() {
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Templat Pesan WhatsApp</CardTitle>
+          <CardDescription>
+            Atur pesan otomatis saat Anda mengklik tombol WhatsApp. Gunakan `[nama]` untuk menyisipkan nama klien.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="whatsapp-template">Templat Pesan</Label>
+            <Textarea 
+              id="whatsapp-template"
+              placeholder="Contoh: Halo [nama], terima kasih telah menghubungi Ningrat Wedding..."
+              value={whatsappTemplate}
+              onChange={(e) => setWhatsappTemplate(e.target.value)}
+              className="min-h-[100px]"
+              disabled={isSaving}
+            />
+          </div>
+          <Button onClick={handleSaveTemplate} disabled={isSaving}>
+            {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            Simpan Templat
+          </Button>
+        </CardContent>
+      </Card>
       <Card>
         <CardHeader>
             <CardTitle>Pesan Masuk Formulir Kontak</CardTitle>
@@ -147,7 +223,7 @@ export default function AdminInboxPage() {
                   </TableCell>
                   <TableCell className="text-right">
                     <Button asChild variant="outline" size="icon">
-                        <Link href={formatWhatsappUrl(sub.whatsapp)} target="_blank">
+                        <Link href={formatWhatsappUrl(sub.whatsapp, sub.name)} target="_blank">
                             <WhatsappIcon />
                             <span className="sr-only">Kirim WhatsApp</span>
                         </Link>

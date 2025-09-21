@@ -542,3 +542,43 @@ export async function getPackageById(packageId: string) {
         return null;
     }
 }
+
+const inboxSettingsSchema = z.object({
+  whatsappTemplate: z.string().optional(),
+});
+
+export async function getInboxSettings() {
+    try {
+        const settingsRef = doc(db, 'settings', 'inbox');
+        const docSnap = await getDoc(settingsRef);
+        if (docSnap.exists()) {
+            return docSnap.data();
+        }
+        return null;
+    } catch (error) {
+        console.error("Gagal mengambil pengaturan pesan masuk:", error);
+        return null;
+    }
+}
+
+export async function saveInboxSettings(data: { whatsappTemplate?: string }) {
+  const validatedFields = inboxSettingsSchema.safeParse(data);
+
+  if (!validatedFields.success) {
+    return {
+      success: false,
+      message: "Data yang diberikan tidak valid.",
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  try {
+    const settingsRef = doc(db, 'settings', 'inbox');
+    await setDoc(settingsRef, validatedFields.data, { merge: true });
+    revalidatePath('/admin/inbox');
+    return { success: true, message: 'Pengaturan pesan masuk berhasil disimpan.' };
+  } catch (e) {
+    console.error('Gagal menyimpan pengaturan pesan masuk:', e);
+    return { success: false, message: 'Gagal menyimpan pengaturan pesan masuk.' };
+  }
+}
