@@ -20,7 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Upload, Loader2, Plus, GripVertical, Trash2, ArrowUp, ArrowDown, Library, Music } from "lucide-react";
+import { Upload, Loader2, Plus, GripVertical, Trash2, ArrowUp, ArrowDown, Library, Music, Link as LinkIcon, Video } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { uploadFileToNeo } from "@/lib/neo-storage";
 import { saveStory } from "@/lib/actions";
@@ -42,7 +42,7 @@ import {
 import FileManagerDialog from "@/components/file-manager-dialog";
 import Image from "next/image";
 
-type BlockType = 'text' | 'h1' | 'h2' | 'title_and_paragraph' | 'image_full' | 'image_split' | 'image_tri';
+type BlockType = 'text' | 'h1' | 'h2' | 'title_and_paragraph' | 'image_full' | 'image_split' | 'image_tri' | 'video' | 'link';
 
 interface ContentBlock {
   id: string;
@@ -159,6 +159,39 @@ const BlockRenderer = ({ block, index, updateBlockContent, removeContentBlock, m
                 disabled={isProcessing}
               />
             </div>
+          ) : block.type === 'video' ? (
+             <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                    <Video className="h-4 w-4 text-muted-foreground" />
+                    <Input 
+                        placeholder="Tempelkan URL video (YouTube, Vimeo, dll.)..."
+                        value={block.content as string}
+                        onChange={(e) => updateBlockContent(block.id, e.target.value)}
+                        disabled={isProcessing}
+                    />
+                </div>
+             </div>
+          ) : block.type === 'link' ? (
+             <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                    <LinkIcon className="h-4 w-4 text-muted-foreground" />
+                    <Input 
+                        placeholder="Tempelkan URL..."
+                        value={block.content.url}
+                        onChange={(e) => updateBlockContent(block.id, { ...block.content, url: e.target.value })}
+                        disabled={isProcessing}
+                    />
+                </div>
+                 <div className="flex items-center gap-2">
+                    <span className="text-sm text-muted-foreground">Teks:</span>
+                    <Input 
+                        placeholder="Teks yang akan ditampilkan"
+                        value={block.content.text}
+                        onChange={(e) => updateBlockContent(block.id, { ...block.content, text: e.target.value })}
+                        disabled={isProcessing}
+                    />
+                </div>
+             </div>
           ) : (
             <div className="space-y-4">
                  <div className="flex gap-2">
@@ -239,7 +272,12 @@ export default function NewStoryPage() {
     let newBlock: ContentBlock;
     if (type === 'title_and_paragraph') {
       newBlock = { id: uuidv4(), type, content: { title: '', paragraph: '' } };
-    } else {
+    } else if (type === 'link') {
+      newBlock = { id: uuidv4(), type, content: { url: '', text: '' } };
+    } else if (type === 'video') {
+       newBlock = { id: uuidv4(), type, content: '' };
+    }
+    else {
       newBlock = {
         id: uuidv4(),
         type,
@@ -331,9 +369,7 @@ export default function NewStoryPage() {
 
       // 2. Process and upload content blocks
       const processedContentBlocks = await Promise.all(contentBlocks.map(async (block, index) => {
-        if (block.type === 'text' || block.type === 'h1' || block.type === 'h2' || block.type === 'title_and_paragraph') {
-          return { id: block.id, type: block.type, content: block.content };
-        } else {
+        if (block.type.startsWith('image')) {
            toast({ title: `Memproses Blok ${index + 1}`, description: `Mengunggah gambar...` });
            const uploadedUrls = await Promise.all(
              (block.content as (File | string)[]).map(item => {
@@ -343,6 +379,8 @@ export default function NewStoryPage() {
            );
            return { id: block.id, type: block.type, content: uploadedUrls };
         }
+        // For non-image blocks, content is already in the correct format
+        return block;
       }));
 
       // 3. Save the final story data
@@ -437,6 +475,8 @@ export default function NewStoryPage() {
                         <SelectItem value="image_full">Gambar Lebar Penuh</SelectItem>
                         <SelectItem value="image_split">Gambar 2 Kolom</SelectItem>
                         <SelectItem value="image_tri">Gambar 3 Kolom</SelectItem>
+                        <SelectItem value="video">Video</SelectItem>
+                        <SelectItem value="link">Tautan</SelectItem>
                       </SelectContent>
                     </Select>
                 </CardContent>

@@ -2,6 +2,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { notFound, useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import {
@@ -18,11 +19,12 @@ import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
-import { CalendarDays, BookUser } from 'lucide-react';
+import { CalendarDays, BookUser, Link as LinkIcon } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface ContentBlock {
   id: string;
-  type: 'text' | 'h1' | 'h2' | 'image_full' | 'image_split' | 'image_tri' | 'title_and_paragraph';
+  type: 'text' | 'h1' | 'h2' | 'image_full' | 'image_split' | 'image_tri' | 'title_and_paragraph' | 'video' | 'link';
   content: any;
 }
 
@@ -35,6 +37,27 @@ interface BlogPost {
   contentBlocks?: ContentBlock[];
   heroImageUrl?: string;
   createdAt: Timestamp;
+}
+
+
+const getYoutubeEmbedUrl = (url: string) => {
+    if (!url) return null;
+    let videoId;
+    if (url.includes('youtube.com/watch?v=')) {
+        videoId = new URL(url).searchParams.get('v');
+    } else if (url.includes('youtu.be/')) {
+        videoId = new URL(url).pathname.split('/')[1];
+    }
+    return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
+};
+
+const getVimeoEmbedUrl = (url: string) => {
+    if (!url) return null;
+    if (url.includes('vimeo.com/')) {
+        const videoId = new URL(url).pathname.split('/')[1];
+        return videoId ? `https://player.vimeo.com/video/${videoId}` : null;
+    }
+    return null;
 }
 
 const BlogContentRenderer = ({ blocks }: { blocks: ContentBlock[] }) => {
@@ -136,6 +159,37 @@ const BlogContentRenderer = ({ blocks }: { blocks: ContentBlock[] }) => {
                   ))}
                 </div>
               );
+            case 'video':
+                const youtubeUrl = getYoutubeEmbedUrl(block.content);
+                const vimeoUrl = getVimeoEmbedUrl(block.content);
+                const embedUrl = youtubeUrl || vimeoUrl;
+
+                if (!embedUrl) return null;
+
+                return (
+                    <div key={block.id} className="w-full aspect-video my-6 md:my-10">
+                        <iframe
+                            src={embedUrl}
+                            title={`video-${block.id}`}
+                            frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                            className="w-full h-full rounded-lg"
+                        ></iframe>
+                    </div>
+                );
+             case 'link':
+                 if (!block.content.url || !block.content.text) return null;
+                 return (
+                     <div key={block.id} className="text-center my-6 md:my-10">
+                         <Button asChild variant="link" className="text-lg">
+                             <Link href={block.content.url} target="_blank" rel="noopener noreferrer">
+                                 <LinkIcon className="mr-2 h-4 w-4" />
+                                 {block.content.text}
+                             </Link>
+                         </Button>
+                     </div>
+                 );
             default:
               return null;
           }
