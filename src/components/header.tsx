@@ -14,6 +14,7 @@ import Image from 'next/image';
 const navLinks = [
   { href: '/portfolio', label: 'Portofolio' },
   { href: '/services', label: 'Layanan' },
+  { href: '/blog', label: 'Blog' },
   { href: '/about', label: 'Tentang' },
   { href: '/contact', label: 'Hubungi kami' },
 ];
@@ -33,6 +34,7 @@ const Logo = ({logoUrl}: {logoUrl?: string}) => {
 export default function Header() {
   const pathname = usePathname();
   const [siteSettings, setSiteSettings] = useState<{ appName?: string; logoUrl?: string }>({});
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     async function fetchSettings() {
@@ -43,13 +45,17 @@ export default function Header() {
     }
     fetchSettings();
   }, []);
+  
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
 
   return (
     <header className="absolute top-0 z-50 w-full text-white">
       <div className="container flex h-24 items-center justify-between mx-auto px-6">
         
         <div className="md:hidden">
-            <Sheet>
+            <Sheet open={open} onOpenChange={setOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="text-white hover:text-white hover:bg-white/10">
                   <Menu className="h-6 w-6" />
@@ -89,6 +95,7 @@ export default function Header() {
                 </Link>
 
                 <nav className="flex items-center space-x-8 text-sm uppercase tracking-widest">
+                    <Link href="/blog" className="transition-opacity hover:opacity-80">Blog</Link>
                     <Link href="/about" className="transition-opacity hover:opacity-80">Tentang</Link>
                     <Link href="/contact" className="transition-opacity hover:opacity-80">Hubungi Kami</Link>
                 </nav>

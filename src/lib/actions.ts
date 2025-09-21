@@ -583,3 +583,102 @@ export async function saveInboxSettings(data: { whatsappTemplate?: string; templ
     return { success: false, message: 'Gagal menyimpan pengaturan pesan masuk.' };
   }
 }
+
+// Blog Actions
+const blogPostSchema = z.object({
+  title: z.string(),
+  author: z.string(),
+  excerpt: z.string().optional(),
+  slug: z.string(),
+  contentBlocks: z.array(contentBlockSchema).optional(),
+  heroImageUrl: z.string().url().optional().nullable(),
+});
+
+export async function saveBlogPost(data: {
+  title: string;
+  author: string;
+  excerpt?: string;
+  heroImageUrl?: string | null;
+  contentBlocks: any[];
+}) {
+  const slug = generateSlug(data.title);
+  const validatedFields = blogPostSchema.safeParse({ ...data, slug });
+
+  if (!validatedFields.success) {
+    return {
+      success: false,
+      message: 'Data postingan blog tidak valid.',
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  try {
+    await addDoc(collection(db, 'blogPosts'), {
+      ...validatedFields.data,
+      createdAt: serverTimestamp(),
+    });
+    revalidatePath('/blog');
+    revalidatePath('/admin/blog');
+    return { success: true, message: 'Postingan blog berhasil disimpan!' };
+  } catch (e) {
+    console.error('Gagal menyimpan postingan blog: ', e);
+    return { success: false, message: 'Gagal menyimpan postingan blog.' };
+  }
+}
+
+export async function updateBlogPost(id: string, data: {
+  title: string;
+  author: string;
+  excerpt?: string;
+  heroImageUrl?: string | null;
+  contentBlocks: any[];
+}) {
+  const slug = generateSlug(data.title);
+  const validatedFields = blogPostSchema.safeParse({ ...data, slug });
+
+  if (!validatedFields.success) {
+    return {
+      success: false,
+      message: 'Data pembaruan postingan blog tidak valid.',
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  try {
+    const postRef = doc(db, 'blogPosts', id);
+    const docSnap = await getDoc(postRef);
+    if (!docSnap.exists()) {
+      return { success: false, message: "Postingan blog tidak ditemukan." };
+    }
+    const existingData = docSnap.data();
+
+    await updateDoc(postRef, {
+      ...validatedFields.data,
+      createdAt: existingData.createdAt,
+      updatedAt: serverTimestamp(),
+    });
+
+    revalidatePath('/blog');
+    revalidatePath(`/blog/${slug}`);
+    revalidatePath('/admin/blog');
+    return { success: true, message: 'Postingan blog berhasil diperbarui!' };
+  } catch (e) {
+    console.error('Gagal memperbarui postingan blog: ', e);
+    return { success: false, message: 'Gagal memperbarui postingan blog.' };
+  }
+}
+
+export async function deleteBlogPost(id: string) {
+  if (!id) {
+    return { success: false, message: 'ID postingan blog diperlukan.' };
+  }
+  try {
+    await deleteDoc(doc(db, 'blogPosts', id));
+    revalidatePath('/blog');
+    revalidatePath('/admin/blog');
+    return { success: true, message: 'Postingan blog berhasil dihapus.' };
+  } catch (error) {
+    console.error('Gagal menghapus postingan blog: ', error);
+    return { success: false, message: 'Gagal menghapus postingan blog.' };
+  }
+}

@@ -16,7 +16,8 @@ import {
   Briefcase,
   CreditCard,
   Inbox,
-  Receipt
+  Receipt,
+  Newspaper
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -122,7 +123,7 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
             <SheetHeader>
                 <SheetTitle className="sr-only">Menu Admin</SheetTitle>
             </SheetHeader>
-            <nav className="grid gap-1 text-sm font-medium">
+            <nav className="grid gap-px text-sm font-medium">
               <Link
                 href="/"
                 className="flex items-center gap-2 text-lg font-semibold mb-4 text-white"
@@ -132,89 +133,96 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
               </Link>
               <Link
                 href="/admin/dashboard"
-                className={cn("mx-[-0.65rem] flex items-center gap-2 rounded-md px-3 py-1 text-sm", isLinkActive('/admin/dashboard') ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-white')}
+                className={cn("flex items-center gap-2 rounded-md px-3 py-2 text-sm", isLinkActive('/admin/dashboard') ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-white')}
               >
                 <Home className="h-4 w-4" />
                 Dasbor
               </Link>
               <Link
                 href="/admin/inbox"
-                className={cn("mx-[-0.65rem] flex items-center gap-2 rounded-md px-3 py-1 text-sm", isLinkActive('/admin/inbox') ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-white')}
+                className={cn("flex items-center gap-2 rounded-md px-3 py-2 text-sm", isLinkActive('/admin/inbox') ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-white')}
               >
                 <Inbox className="h-4 w-4" />
                 Pesan Masuk
               </Link>
               <Link
                 href="/admin/stories/new"
-                className={cn("mx-[-0.65rem] flex items-center gap-2 rounded-md px-3 py-1 text-sm", isLinkActive('/admin/stories/new') ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-white')}
+                className={cn("flex items-center gap-2 rounded-md px-3 py-2 text-sm", isLinkActive('/admin/stories/new') ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-white')}
               >
                 <FileText className="h-4 w-4" />
                 Cerita Baru
               </Link>
                <Link
+                href="/admin/blog"
+                className={cn("flex items-center gap-2 rounded-md px-3 py-2 text-sm", pathname.startsWith('/admin/blog') ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-white')}
+              >
+                <Newspaper className="h-4 w-4" />
+                Blog
+              </Link>
+               <Link
                 href="/admin/file-manager"
-                className={cn("mx-[-0.65rem] flex items-center gap-2 rounded-md px-3 py-1 text-sm", isLinkActive('/admin/file-manager') ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-white')}
+                className={cn("flex items-center gap-2 rounded-md px-3 py-2 text-sm", isLinkActive('/admin/file-manager') ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-white')}
               >
                 <Folder className="h-4 w-4" />
                 Pengelola File
               </Link>
               <Link
                 href="/admin/invoice"
-                className={cn("mx-[-0.65rem] flex items-center gap-2 rounded-md px-3 py-1 text-sm", isLinkActive('/admin/invoice') ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-white')}
+                className={cn("flex items-center gap-2 rounded-md px-3 py-2 text-sm", isLinkActive('/admin/invoice') ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-white')}
               >
                 <Receipt className="h-4 w-4" />
                 Faktur
               </Link>
               <Link
                 href="/admin/checkout"
-                className={cn("mx-[-0.65rem] flex items-center gap-2 rounded-md px-3 py-1 text-sm", isLinkActive('/admin/checkout') ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-white')}
+                className={cn("flex items-center gap-2 rounded-md px-3 py-2 text-sm", isLinkActive('/admin/checkout') ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-white')}
               >
                 <CreditCard className="h-4 w-4" />
                 Checkout
               </Link>
                <Accordion type="single" collapsible className="w-full" defaultValue={pathname.startsWith('/admin/settings') ? 'settings' : ''}>
                 <AccordionItem value="settings" className="border-b-0">
-                  <AccordionTrigger className={cn("mx-[-0.65rem] flex items-center gap-2 rounded-md px-3 py-1 text-sm text-slate-400 hover:text-white hover:no-underline [&[data-state=open]>svg]:text-white", pathname.startsWith('/admin/settings') && 'text-white')}>
+                  <AccordionTrigger className={cn("flex items-center gap-2 rounded-md px-3 py-2 text-sm text-slate-400 hover:text-white hover:no-underline [&[data-state=open]>svg]:text-white", pathname.startsWith('/admin/settings') && 'text-white')}>
                      <div className="flex items-center gap-2">
                         <Settings className="h-4 w-4" />
                         Pengaturan
                      </div>
                   </AccordionTrigger>
-                  <AccordionContent className="pl-8">
-                    <nav className="grid gap-1 text-xs font-medium">
+                  <AccordionContent className="pl-8 pt-1">
+                    <nav className="grid gap-px text-xs font-medium">
                        <Link
                         href="/admin/settings"
-                        className={cn("flex items-center gap-3 rounded-lg py-1 transition-all", isLinkActive('/admin/settings') ? 'text-white font-semibold' : 'text-slate-400 hover:text-white')}
+                        className={cn("flex items-center gap-3 rounded-lg px-3 py-2 transition-all", isLinkActive('/admin/settings') ? 'text-white font-semibold bg-slate-800' : 'text-slate-400 hover:text-white')}
                       >
                         Umum
                       </Link>
                       <Link
                         href="/admin/settings/home"
-                        className={cn("flex items-center gap-3 rounded-lg py-1 transition-all", isLinkActive('/admin/settings/home') ? 'text-white font-semibold' : 'text-slate-400 hover:text-white')}
+                        className={cn("flex items-center gap-3 rounded-lg px-3 py-2 transition-all", isLinkActive('/admin/settings/home') ? 'text-white font-semibold bg-slate-800' : 'text-slate-400 hover:text-white')}
                       >
                         Halaman Beranda
                       </Link>
                       <Link
                         href="/admin/settings/portfolio"
-                        className={cn("flex items-center gap-3 rounded-lg py-1 transition-all", isLinkActive('/admin/settings/portfolio') ? 'text-white font-semibold' : 'text-slate-400 hover:text-white')}
+                        className={cn("flex items-center gap-3 rounded-lg px-3 py-2 transition-all", isLinkActive('/admin/settings/portfolio') ? 'text-white font-semibold bg-slate-800' : 'text-slate-400 hover:text-white')}
                       >
                         Halaman Portofolio
                       </Link>
                       <Link
                         href="/admin/settings/about"
-                        className={cn("flex items-center gap-3 rounded-lg py-1 transition-all", isLinkActive('/admin/settings/about') ? 'text-white font-semibold' : 'text-slate-400 hover:text-white')}
+                        className={cn("flex items-center gap-3 rounded-lg px-3 py-2 transition-all", isLinkActive('/admin/settings/about') ? 'text-white font-semibold bg-slate-800' : 'text-slate-400 hover:text-white')}
                       >
                         Halaman Tentang
                       </Link>
                       <Link
                         href="/admin/settings/contact"
-                        className={cn("flex items-center gap-3 rounded-lg py-1 transition-all", isLinkActive('/admin/settings/contact') ? 'text-white font-semibold' : 'text-slate-400 hover:text-white')}
+                        className={cn("flex items-center gap-3 rounded-lg px-3 py-2 transition-all", isLinkActive('/admin/settings/contact') ? 'text-white font-semibold bg-slate-800' : 'text-slate-400 hover:text-white')}
                       >
                         Halaman Kontak
                       </Link>
                       <Link
                         href="/admin/settings/services"
-                        className={cn("flex items-center gap-3 rounded-lg py-1 transition-all", isLinkActive('/admin/settings/services') ? 'text-white font-semibold' : 'text-slate-400 hover:text-white')}
+                        className={cn("flex items-center gap-3 rounded-lg px-3 py-2 transition-all", isLinkActive('/admin/settings/services') ? 'text-white font-semibold bg-slate-800' : 'text-slate-400 hover:text-white')}
                       >
                         Halaman Layanan
                       </Link>
@@ -224,7 +232,7 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
               </Accordion>
             </nav>
             <div className="mt-auto">
-                <Button variant="ghost" onClick={handleLogout} className="w-full justify-start gap-2 px-3 py-1 text-sm text-slate-400 hover:text-white hover:bg-slate-800">
+                <Button variant="ghost" onClick={handleLogout} className="w-full justify-start gap-2 px-3 py-2 text-sm text-slate-400 hover:text-white hover:bg-slate-800">
                     <LogOut className="h-4 w-4" />
                     Keluar
                 </Button>
