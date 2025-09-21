@@ -20,21 +20,17 @@ import { revalidatePath } from 'next/cache';
 
 const contactSchema = z.object({
   name: z.string().min(2, { message: 'Nama harus terdiri dari minimal 2 karakter.' }),
-  email: z.string().email({ message: 'Silakan masukkan email yang valid.' }),
-  whatsapp: z.string().min(6, { message: 'Nomor WhatsApp harus terdiri dari minimal 6 digit.'}),
+  eventType: z.string().min(3, { message: "Jenis acara wajib diisi." }),
   location: z.string().min(2, { message: "Lokasi wajib diisi." }),
-  knowFrom: z.array(z.string()).refine((value) => value.length > 0, {
-    message: "Anda harus memilih setidaknya satu item.",
-  }),
+  whatsapp: z.string().min(6, { message: 'Nomor WhatsApp harus terdiri dari minimal 6 digit.'}),
 });
 
 export async function submitContactForm(prevState: any, formData: FormData) {
   const validatedFields = contactSchema.safeParse({
     name: formData.get('name'),
-    email: formData.get('email'),
-    whatsapp: formData.get('whatsapp'),
+    eventType: formData.get('eventType'),
     location: formData.get('location'),
-    knowFrom: formData.getAll('knowFrom'),
+    whatsapp: formData.get('whatsapp'),
   });
 
   if (!validatedFields.success) {

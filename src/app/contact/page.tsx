@@ -8,6 +8,16 @@ import { getContactSettings } from '@/lib/actions';
 import Link from "next/link";
 import { Skeleton } from '@/components/ui/skeleton';
 import { Download } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import ContactForm from '@/components/contact-form';
+
 
 interface ContactSettings {
     heroImageUrl?: string;
@@ -26,6 +36,7 @@ const defaultSettings: ContactSettings = {
 export default function ContactPage() {
   const [settings, setSettings] = useState<ContactSettings>(defaultSettings);
   const [loading, setLoading] = useState(true);
+  const [isFormOpen, setIsFormOpen] = useState(false);
 
   useEffect(() => {
     async function fetchSettings() {
@@ -105,13 +116,24 @@ export default function ContactPage() {
                       WHATSAPP | PENAWARAN KHUSUS
                   </Link>
               </Button>
-               {settings.downloadableFileUrl && (
-                  <Button asChild variant="default" className="rounded-sm uppercase tracking-widest font-normal px-8 py-6">
-                      <Link href={settings.downloadableFileUrl} target="_blank" download>
+              {settings.downloadableFileUrl && (
+                  <AlertDialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+                    <AlertDialogTrigger asChild>
+                       <Button variant="default" className="rounded-sm uppercase tracking-widest font-normal px-8 py-6">
                          <Download className="mr-2 h-4 w-4" />
                          Unduh Katalog
-                      </Link>
-                  </Button>
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Unduh Katalog Harga</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Silakan isi detail di bawah ini untuk memulai unduhan Anda.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <ContactForm onFormSubmit={() => setIsFormOpen(false)} />
+                    </AlertDialogContent>
+                  </AlertDialog>
               )}
         </div>
       </div>
