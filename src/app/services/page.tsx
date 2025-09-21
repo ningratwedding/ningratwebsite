@@ -67,6 +67,7 @@ const defaultSettings: ServicesSettings = {
 export default function ServicesPage() {
   const [settings, setSettings] = useState<ServicesSettings>(defaultSettings);
   const [loading, setLoading] = useState(true);
+  const whatsappNumber = "6282340211624";
 
   useEffect(() => {
     async function fetchSettings() {
@@ -156,7 +157,11 @@ export default function ServicesPage() {
             <p className="text-muted-foreground mt-2">{settings.packagesDescription}</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {settings.packages.map((pkg, index) => (
+            {settings.packages.map((pkg, index) => {
+               const message = `Halo, saya tertarik dengan paket fotografi *${pkg.name}* (${pkg.price}).\n\nBerikut adalah detail yang saya lihat di website:\n${pkg.features.map(f => `- ${f}`).join('\n')}\n\nMohon informasinya lebih lanjut. Terima kasih.`;
+               const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+
+              return (
               <Card key={pkg.id || index} className={`flex flex-col bg-transparent rounded-none ${pkg.highlight ? 'border-primary' : 'border-gray-200'}`}>
                 <CardHeader className="text-center">
                   <CardTitle className="text-2xl font-headline">{pkg.name}</CardTitle>
@@ -176,11 +181,11 @@ export default function ServicesPage() {
                 </CardContent>
                 <div className="p-6 pt-0 mt-6">
                   <Button asChild className="w-full" variant={pkg.highlight ? 'default' : 'outline'}>
-                    <Link href={`/checkout?package=${pkg.id}`}>Pilih Paket</Link>
+                    <Link href={whatsappUrl} target="_blank">Pilih Paket</Link>
                   </Button>
                 </div>
               </Card>
-            ))}
+            )})}
           </div>
         </div>
       </section>
