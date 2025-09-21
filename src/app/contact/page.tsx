@@ -7,17 +7,20 @@ import { Button } from "@/components/ui/button";
 import { getContactSettings } from '@/lib/actions';
 import Link from "next/link";
 import { Skeleton } from '@/components/ui/skeleton';
+import { Download } from 'lucide-react';
 
 interface ContactSettings {
     heroImageUrl?: string;
     headline?: string;
     paragraph?: string;
+    downloadableFileUrl?: string;
 }
 
 const defaultSettings: ContactSettings = {
     heroImageUrl: "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=2670&auto=format&fit=crop",
     headline: "Hai, akhirnya kita bertemu.",
     paragraph: "Senang bertemu dengan Anda di sini. Jika Anda tertarik dengan layanan kami, itu berarti Anda memiliki selera tinggi dalam melihat gambar dan fotografi, sama seperti kami. Jika Anda memiliki pertanyaan, Anda dapat menghubungi kami melalui WhatsApp melalui tautan di bawah ini. Semoga harimu menyenangkan! Kami berharap dapat bertemu Anda di momen terindah Anda.",
+    downloadableFileUrl: "",
 };
 
 export default function ContactPage() {
@@ -35,6 +38,7 @@ export default function ContactPage() {
           heroImageUrl: fetchedSettings?.heroImageUrl || defaultSettings.heroImageUrl,
           headline: fetchedSettings?.headline || defaultSettings.headline,
           paragraph: fetchedSettings?.paragraph || paragraph,
+          downloadableFileUrl: fetchedSettings?.downloadableFileUrl || "",
       });
       
       setLoading(false);
@@ -95,12 +99,20 @@ export default function ContactPage() {
               </p>
           </div>
         </div>
-          <div className="text-center mt-8">
+          <div className="text-center mt-8 space-y-4">
               <Button asChild variant="outline" className="bg-accent text-accent-foreground hover:bg-accent/90 border-accent hover:border-accent/90 rounded-sm uppercase tracking-widest font-normal px-8 py-6">
                   <Link href="https://wa.me/6282340211624" target="_blank">
                       WHATSAPP | PENAWARAN KHUSUS
                   </Link>
               </Button>
+               {settings.downloadableFileUrl && (
+                  <Button asChild variant="default" className="rounded-sm uppercase tracking-widest font-normal px-8 py-6">
+                      <Link href={settings.downloadableFileUrl} target="_blank" download>
+                         <Download className="mr-2 h-4 w-4" />
+                         Unduh Katalog
+                      </Link>
+                  </Button>
+              )}
         </div>
       </div>
       
