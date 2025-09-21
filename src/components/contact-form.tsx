@@ -85,18 +85,22 @@ export default function ContactForm() {
     }
   }, [state, toast, form]);
 
+  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    form.handleSubmit(() => {
+      if (formRef.current) {
+        formAction(new FormData(formRef.current));
+      }
+    })();
+  };
+
   return (
     <Card className="w-full bg-transparent border-none shadow-none">
       <Form {...form}>
         <form
             ref={formRef}
-            action={formAction}
+            onSubmit={handleFormSubmit}
             className="space-y-6"
-            onSubmit={(evt) => {
-                form.handleSubmit(() => {
-                    // This will be called on successful validation, allowing the native form action to proceed.
-                })(evt);
-            }}
         >
           <CardContent className="space-y-6 p-0">
             <FormField
