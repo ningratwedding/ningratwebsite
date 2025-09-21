@@ -56,6 +56,7 @@ function CheckoutPageContent() {
 
     const handlePayment = () => {
         setIsProcessing(true);
+        // Placeholder for payment integration logic
         setTimeout(() => {
             setIsProcessing(false);
         }, 3000);
