@@ -8,7 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { AdminTitleContext } from '@/contexts/AdminTitleContext';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
-
+import Link from 'next/link';
 import {
   Card,
   CardContent,
@@ -25,7 +25,8 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { MessageSquare } from 'lucide-react';
 
 interface Submission {
   id: string;
@@ -72,6 +73,14 @@ export default function AdminInboxPage() {
     fetchSubmissions();
   }, [toast]);
 
+  const formatWhatsappUrl = (number: string) => {
+    let formattedNumber = number.replace(/[^0-9]/g, '');
+    if (formattedNumber.startsWith('0')) {
+      formattedNumber = '62' + formattedNumber.substring(1);
+    }
+    return `https://wa.me/${formattedNumber}`;
+  };
+
 
   if (loading) {
     return (
@@ -111,6 +120,7 @@ export default function AdminInboxPage() {
                 <TableHead className="hidden md:table-cell">Lokasi</TableHead>
                 <TableHead className="hidden lg:table-cell">WhatsApp</TableHead>
                 <TableHead className="text-right">Tanggal</TableHead>
+                <TableHead><span className="sr-only">Tindakan</span></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -123,10 +133,18 @@ export default function AdminInboxPage() {
                   <TableCell className="text-right text-muted-foreground text-xs">
                      {sub.submittedAt ? format(sub.submittedAt.toDate(), 'PPP, HH:mm', { locale: id }) : 'N/A'}
                   </TableCell>
+                  <TableCell className="text-right">
+                    <Button asChild variant="outline" size="icon">
+                        <Link href={formatWhatsappUrl(sub.whatsapp)} target="_blank">
+                            <MessageSquare className="h-4 w-4" />
+                            <span className="sr-only">Kirim WhatsApp</span>
+                        </Link>
+                    </Button>
+                  </TableCell>
                 </TableRow>
               )) : (
                 <TableRow>
-                    <TableCell colSpan={5} className="h-24 text-center">
+                    <TableCell colSpan={6} className="h-24 text-center">
                         Belum ada pesan masuk.
                     </TableCell>
                 </TableRow>
