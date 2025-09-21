@@ -15,7 +15,8 @@ import {
   LogOut,
   Briefcase,
   CreditCard,
-  Inbox
+  Inbox,
+  Receipt
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -156,6 +157,13 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
               >
                 <Folder className="h-5 w-5" />
                 Pengelola File
+              </Link>
+              <Link
+                href="/admin/invoice"
+                className={cn("mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2", isLinkActive('/admin/invoice') ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-white')}
+              >
+                <Receipt className="h-5 w-5" />
+                Faktur
               </Link>
               <Link
                 href="/admin/checkout"
