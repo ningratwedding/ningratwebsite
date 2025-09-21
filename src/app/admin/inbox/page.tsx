@@ -61,7 +61,7 @@ export default function AdminInboxPage() {
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [whatsappTemplate, setWhatsappTemplate] = useState("");
+  const [whatsappTemplate, setWhatsappTemplate] = useState("Hai [nama],\nCinta pantas dirayakan dengan indah.\nKami Ningrat Wedding hadir untuk membantu merangkai hari bahagia jadi kenangan abadi.\n\nDetail penawaran jasa pernikahan Terbaru Kami ada di file terlampir ya. Terimakasih!");
   const [templateFileUrl, setTemplateFileUrl] = useState<string | null>(null);
   const [isFileManagerOpen, setIsFileManagerOpen] = useState(false);
   const { setPageTitle } = useContext(AdminTitleContext)!;
@@ -85,7 +85,7 @@ export default function AdminInboxPage() {
         setSubmissions(subsList);
         
         if(settings) {
-            setWhatsappTemplate(settings.whatsappTemplate || "");
+            setWhatsappTemplate(settings.whatsappTemplate || "Hai [nama],\nCinta pantas dirayakan dengan indah.\nKami Ningrat Wedding hadir untuk membantu merangkai hari bahagia jadi kenangan abadi.\n\nDetail penawaran jasa pernikahan Terbaru Kami ada di file terlampir ya. Terimakasih!");
             setTemplateFileUrl(settings.templateFileUrl || null);
         }
 
@@ -139,8 +139,9 @@ export default function AdminInboxPage() {
       formattedNumber = '62' + formattedNumber.substring(1);
     }
 
-    let message = whatsappTemplate.replace(/\[nama\]/g, name);
-    message = message.replace(/\[file\]/g, templateFileUrl || '');
+    let message = whatsappTemplate
+      .replace(/\[nama\]/gi, name)
+      .replace(/\[file\]/gi, templateFileUrl || '');
 
     const encodedMessage = encodeURIComponent(message);
     
@@ -200,7 +201,7 @@ export default function AdminInboxPage() {
               placeholder="Contoh: Halo [nama], terima kasih telah menghubungi. Berikut katalog kami: [file]"
               value={whatsappTemplate}
               onChange={(e) => setWhatsappTemplate(e.target.value)}
-              className="min-h-[100px]"
+              className="min-h-[150px]"
               disabled={isSaving}
             />
           </div>
