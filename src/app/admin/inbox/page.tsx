@@ -30,10 +30,9 @@ import { Badge } from '@/components/ui/badge';
 interface Submission {
   id: string;
   name: string;
-  email: string;
-  whatsapp: string;
+  eventType: string;
   location: string;
-  knowFrom: string[];
+  whatsapp: string;
   submittedAt: Timestamp;
 }
 
@@ -73,13 +72,6 @@ export default function AdminInboxPage() {
     fetchSubmissions();
   }, [toast]);
 
-  const knowFromLabels: { [key: string]: string } = {
-    friends_family: "Teman/Keluarga",
-    instagram: "Instagram",
-    tiktok: "TikTok",
-    ads: "Iklan",
-  };
-
 
   if (loading) {
     return (
@@ -115,9 +107,9 @@ export default function AdminInboxPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>Nama</TableHead>
-                <TableHead className="hidden sm:table-cell">Kontak</TableHead>
+                <TableHead className="hidden sm:table-cell">Jenis Acara</TableHead>
                 <TableHead className="hidden md:table-cell">Lokasi</TableHead>
-                <TableHead className="hidden lg:table-cell">Tahu Dari</TableHead>
+                <TableHead className="hidden lg:table-cell">WhatsApp</TableHead>
                 <TableHead className="text-right">Tanggal</TableHead>
               </TableRow>
             </TableHeader>
@@ -125,20 +117,9 @@ export default function AdminInboxPage() {
               {submissions.length > 0 ? submissions.map((sub) => (
                 <TableRow key={sub.id}>
                   <TableCell className="font-medium">{sub.name}</TableCell>
-                  <TableCell className="hidden sm:table-cell">
-                    <div className="flex flex-col">
-                        <span>{sub.email}</span>
-                        <span className="text-muted-foreground">{sub.whatsapp}</span>
-                    </div>
-                  </TableCell>
+                  <TableCell className="hidden sm:table-cell">{sub.eventType}</TableCell>
                   <TableCell className="hidden md:table-cell">{sub.location}</TableCell>
-                  <TableCell className="hidden lg:table-cell">
-                    <div className="flex flex-wrap gap-1">
-                        {sub.knowFrom.map(item => (
-                            <Badge key={item} variant="secondary">{knowFromLabels[item] || item}</Badge>
-                        ))}
-                    </div>
-                  </TableCell>
+                  <TableCell className="hidden lg:table-cell">{sub.whatsapp}</TableCell>
                   <TableCell className="text-right text-muted-foreground text-xs">
                      {sub.submittedAt ? format(sub.submittedAt.toDate(), 'PPP, HH:mm', { locale: id }) : 'N/A'}
                   </TableCell>
@@ -157,5 +138,3 @@ export default function AdminInboxPage() {
     </main>
   );
 }
-
-    
