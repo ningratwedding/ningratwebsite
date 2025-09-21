@@ -160,9 +160,10 @@ export default function ServicesPage() {
               <Card key={pkg.id || index} className={`flex flex-col bg-transparent rounded-none ${pkg.highlight ? 'border-primary' : 'border-gray-200'}`}>
                 <CardHeader className="text-center">
                   <CardTitle className="text-2xl font-headline">{pkg.name}</CardTitle>
-                  <CardDescription className="text-3xl font-bold text-primary mt-2">{pkg.price}</CardDescription>
+                  <CardDescription className="text-3xl font-bold text-primary mt-2 pb-6">{pkg.price}</CardDescription>
+                   <Separator />
                 </CardHeader>
-                <CardContent className="flex-grow">
+                <CardContent className="flex-grow pt-6">
                   <h4 className="font-semibold mb-4 text-center text-muted-foreground">YANG DI DAPATKAN</h4>
                   <ul className="space-y-3 text-sm">
                     {pkg.features.map((feature, i) => (
