@@ -110,11 +110,11 @@ export default function ContactPage() {
               </p>
           </div>
         </div>
-          <div className="text-center mt-8 space-y-4">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-4 mt-8">
               {settings.downloadableFileUrl && (
                   <AlertDialog open={isFormOpen} onOpenChange={setIsFormOpen}>
                     <AlertDialogTrigger asChild>
-                       <Button variant="default" className="rounded-sm uppercase tracking-widest font-normal px-8 py-6">
+                       <Button variant="default" className="w-full md:w-auto rounded-sm uppercase tracking-widest font-normal px-8 py-6">
                          <Download className="mr-2 h-4 w-4" />
                          Unduh Katalog
                       </Button>
@@ -130,7 +130,7 @@ export default function ContactPage() {
                     </AlertDialogContent>
                   </AlertDialog>
               )}
-               <Button asChild variant="outline" className="bg-accent text-accent-foreground hover:bg-accent/90 border-accent hover:border-accent/90 rounded-sm uppercase tracking-widest font-normal px-8 py-6">
+               <Button asChild variant="outline" className="w-full md:w-auto bg-accent text-accent-foreground hover:bg-accent/90 border-accent hover:border-accent/90 rounded-sm uppercase tracking-widest font-normal px-8 py-6">
                   <Link href="https://wa.me/6282340211624" target="_blank">
                       WHATSAPP | PENAWARAN KHUSUS
                   </Link>
