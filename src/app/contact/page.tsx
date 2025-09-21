@@ -3,7 +3,6 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import ContactForm from "@/components/contact-form";
 import { Button } from "@/components/ui/button";
 import { getContactSettings } from '@/lib/actions';
 import Link from "next/link";
@@ -18,7 +17,7 @@ interface ContactSettings {
 const defaultSettings: ContactSettings = {
     heroImageUrl: "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=2670&auto=format&fit=crop",
     headline: "Hai, akhirnya kita bertemu.",
-    paragraph: "Senang bertemu dengan Anda di sini. Jika Anda tertarik dengan layanan kami, itu berarti Anda memiliki selera tinggi dalam melihat gambar dan fotografi, sama seperti kami. Silakan isi formulir dan Anda akan diarahkan ke daftar harga kami. Atau, jika Anda memiliki pertanyaan lain, Anda dapat menghubungi kami melalui WhatsApp melalui tautan di bawah ini. Semoga harimu menyenangkan! Kami berharap dapat bertemu Anda di momen terindah Anda.",
+    paragraph: "Senang bertemu dengan Anda di sini. Jika Anda tertarik dengan layanan kami, itu berarti Anda memiliki selera tinggi dalam melihat gambar dan fotografi, sama seperti kami. Jika Anda memiliki pertanyaan, Anda dapat menghubungi kami melalui WhatsApp melalui tautan di bawah ini. Semoga harimu menyenangkan! Kami berharap dapat bertemu Anda di momen terindah Anda.",
 };
 
 export default function ContactPage() {
@@ -30,10 +29,12 @@ export default function ContactPage() {
       setLoading(true);
       const fetchedSettings = await getContactSettings();
       
+      const paragraph = "Senang bertemu dengan Anda di sini. Jika Anda tertarik dengan layanan kami, itu berarti Anda memiliki selera tinggi dalam melihat gambar dan fotografi, sama seperti kami. Jika Anda memiliki pertanyaan, Anda dapat menghubungi kami melalui WhatsApp melalui tautan di bawah ini. Semoga harimu menyenangkan! Kami berharap dapat bertemu Anda di momen terindah Anda.";
+
       setSettings({
           heroImageUrl: fetchedSettings?.heroImageUrl || defaultSettings.heroImageUrl,
           headline: fetchedSettings?.headline || defaultSettings.headline,
-          paragraph: fetchedSettings?.paragraph || defaultSettings.paragraph,
+          paragraph: fetchedSettings?.paragraph || paragraph,
       });
       
       setLoading(false);
@@ -94,7 +95,6 @@ export default function ContactPage() {
               </p>
           </div>
         </div>
-        <ContactForm />
           <div className="text-center mt-8">
               <Button asChild variant="outline" className="bg-accent text-accent-foreground hover:bg-accent/90 border-accent hover:border-accent/90 rounded-sm uppercase tracking-widest font-normal px-8 py-6">
                   <Link href="https://wa.me/6282340211624" target="_blank">

@@ -241,7 +241,7 @@ export default function AdminContactSettingsPage() {
                    </div>
                    
                    <div className="space-y-2">
-                        <Label>File yang Dapat Diunduh (PDF)</Label>
+                        <Label>File Katalog yang Dapat Diunduh (PDF)</Label>
                          <div className="relative w-full max-w-2xl rounded-lg border bg-muted p-4 flex items-center justify-between">
                             <div className="flex items-center gap-3">
                                <FileIcon className="h-6 w-6 text-muted-foreground" />
