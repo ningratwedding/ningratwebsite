@@ -111,11 +111,6 @@ export default function ContactPage() {
           </div>
         </div>
           <div className="text-center mt-8 space-y-4">
-              <Button asChild variant="outline" className="bg-accent text-accent-foreground hover:bg-accent/90 border-accent hover:border-accent/90 rounded-sm uppercase tracking-widest font-normal px-8 py-6">
-                  <Link href="https://wa.me/6282340211624" target="_blank">
-                      WHATSAPP | PENAWARAN KHUSUS
-                  </Link>
-              </Button>
               {settings.downloadableFileUrl && (
                   <AlertDialog open={isFormOpen} onOpenChange={setIsFormOpen}>
                     <AlertDialogTrigger asChild>
@@ -135,6 +130,11 @@ export default function ContactPage() {
                     </AlertDialogContent>
                   </AlertDialog>
               )}
+               <Button asChild variant="outline" className="bg-accent text-accent-foreground hover:bg-accent/90 border-accent hover:border-accent/90 rounded-sm uppercase tracking-widest font-normal px-8 py-6">
+                  <Link href="https://wa.me/6282340211624" target="_blank">
+                      WHATSAPP | PENAWARAN KHUSUS
+                  </Link>
+              </Button>
         </div>
       </div>
       
