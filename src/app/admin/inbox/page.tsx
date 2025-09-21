@@ -31,6 +31,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import { Loader2, File as FileIcon, X, Library } from 'lucide-react';
 
 
@@ -61,10 +62,12 @@ export default function AdminInboxPage() {
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [whatsappTemplate, setWhatsappTemplate] = useState("Hai [nama],\nCinta pantas dirayakan dengan indah.\nKami Ningrat Wedding hadir untuk membantu merangkai hari bahagia jadi kenangan abadi.\n\nDetail penawaran jasa pernikahan Terbaru Kami ada di file terlampir ya. Terimakasih!");
+  const [whatsappTemplate, setWhatsappTemplate] = useState("");
   const [templateFileUrl, setTemplateFileUrl] = useState<string | null>(null);
   const [isFileManagerOpen, setIsFileManagerOpen] = useState(false);
   const { setPageTitle } = useContext(AdminTitleContext)!;
+  const [searchTerm, setSearchTerm] = useState("");
+
 
   useEffect(() => {
     setPageTitle('Pesan Masuk');
@@ -87,6 +90,8 @@ export default function AdminInboxPage() {
         if(settings) {
             setWhatsappTemplate(settings.whatsappTemplate || "Hai [nama],\nCinta pantas dirayakan dengan indah.\nKami Ningrat Wedding hadir untuk membantu merangkai hari bahagia jadi kenangan abadi.\n\nDetail penawaran jasa pernikahan Terbaru Kami ada di file terlampir ya. Terimakasih!");
             setTemplateFileUrl(settings.templateFileUrl || null);
+        } else {
+             setWhatsappTemplate("Hai [nama],\nCinta pantas dirayakan dengan indah.\nKami Ningrat Wedding hadir untuk membantu merangkai hari bahagia jadi kenangan abadi.\n\nDetail penawaran jasa pernikahan Terbaru Kami ada di file terlampir ya. Terimakasih!");
         }
 
       } catch (error) {
@@ -147,6 +152,13 @@ export default function AdminInboxPage() {
     
     return `https://wa.me/${formattedNumber}?text=${encodedMessage}`;
   };
+  
+  const filteredSubmissions = submissions.filter(sub => 
+    sub.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    sub.eventType.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    sub.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    sub.whatsapp.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
 
   if (loading) {
@@ -239,10 +251,21 @@ export default function AdminInboxPage() {
       </Card>
       <Card>
         <CardHeader>
-            <CardTitle>Pesan Masuk Formulir Kontak</CardTitle>
-            <CardDescription>
-              Lihat semua pesan yang dikirim melalui formulir kontak Anda.
-            </CardDescription>
+            <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+                <div>
+                    <CardTitle>Pesan Masuk Formulir Kontak</CardTitle>
+                    <CardDescription className="mt-1">
+                      Lihat semua pesan yang dikirim melalui formulir kontak Anda.
+                    </CardDescription>
+                </div>
+                <div className="relative w-full sm:max-w-xs">
+                    <Input 
+                        placeholder="Cari pesan..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                </div>
+            </div>
         </CardHeader>
         <CardContent>
           <Table>
@@ -257,7 +280,7 @@ export default function AdminInboxPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {submissions.length > 0 ? submissions.map((sub) => (
+              {filteredSubmissions.length > 0 ? filteredSubmissions.map((sub) => (
                 <TableRow key={sub.id}>
                   <TableCell className="font-medium">{sub.name}</TableCell>
                   <TableCell className="hidden sm:table-cell">{sub.eventType}</TableCell>
@@ -278,7 +301,7 @@ export default function AdminInboxPage() {
               )) : (
                 <TableRow>
                     <TableCell colSpan={6} className="h-24 text-center">
-                        Belum ada pesan masuk.
+                        {searchTerm ? "Tidak ada pesan yang cocok dengan pencarian Anda." : "Belum ada pesan masuk."}
                     </TableCell>
                 </TableRow>
               )}
