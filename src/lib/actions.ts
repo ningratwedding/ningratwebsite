@@ -370,10 +370,10 @@ export async function saveAboutSettings(data: {
 
 
 const contactSettingsSchema = z.object({
-    heroImageUrl: z.string().url("URL Gambar Hero tidak valid.").optional(),
+    heroImageUrl: z.string().url("URL Gambar Hero tidak valid.").optional().or(z.literal('')),
     headline: z.string().optional(),
     paragraph: z.string().optional(),
-    downloadableFileUrl: z.string().url("URL File tidak valid.").optional(),
+    downloadableFileUrl: z.string().url("URL File tidak valid.").optional().or(z.literal('')),
 });
 
 export async function getContactSettings() {
@@ -546,5 +546,3 @@ export async function getPackageById(packageId: string) {
         return null;
     }
 }
-
-    
