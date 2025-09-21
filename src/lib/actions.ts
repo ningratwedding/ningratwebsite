@@ -545,6 +545,7 @@ export async function getPackageById(packageId: string) {
 
 const inboxSettingsSchema = z.object({
   whatsappTemplate: z.string().optional(),
+  templateFileUrl: z.string().url().optional(),
 });
 
 export async function getInboxSettings() {
@@ -552,7 +553,7 @@ export async function getInboxSettings() {
         const settingsRef = doc(db, 'settings', 'inbox');
         const docSnap = await getDoc(settingsRef);
         if (docSnap.exists()) {
-            return docSnap.data();
+            return docSnap.data() as z.infer<typeof inboxSettingsSchema>;
         }
         return null;
     } catch (error) {
@@ -561,7 +562,7 @@ export async function getInboxSettings() {
     }
 }
 
-export async function saveInboxSettings(data: { whatsappTemplate?: string }) {
+export async function saveInboxSettings(data: { whatsappTemplate?: string; templateFileUrl?: string }) {
   const validatedFields = inboxSettingsSchema.safeParse(data);
 
   if (!validatedFields.success) {

@@ -10,6 +10,7 @@ import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
 import Link from 'next/link';
 import { getInboxSettings, saveInboxSettings } from '@/lib/actions';
+import FileManagerDialog from "@/components/file-manager-dialog";
 
 import {
   Card,
@@ -30,7 +31,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Loader2 } from 'lucide-react';
+import { Loader2, File as FileIcon, X, Library } from 'lucide-react';
 
 
 interface Submission {
@@ -61,6 +62,8 @@ export default function AdminInboxPage() {
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [whatsappTemplate, setWhatsappTemplate] = useState("");
+  const [templateFileUrl, setTemplateFileUrl] = useState<string | null>(null);
+  const [isFileManagerOpen, setIsFileManagerOpen] = useState(false);
   const { setPageTitle } = useContext(AdminTitleContext)!;
 
   useEffect(() => {
@@ -81,8 +84,9 @@ export default function AdminInboxPage() {
         );
         setSubmissions(subsList);
         
-        if(settings?.whatsappTemplate) {
-            setWhatsappTemplate(settings.whatsappTemplate);
+        if(settings) {
+            setWhatsappTemplate(settings.whatsappTemplate || "");
+            setTemplateFileUrl(settings.templateFileUrl || null);
         }
 
       } catch (error) {
@@ -103,7 +107,7 @@ export default function AdminInboxPage() {
   const handleSaveTemplate = async () => {
     setIsSaving(true);
     try {
-        const result = await saveInboxSettings({ whatsappTemplate });
+        const result = await saveInboxSettings({ whatsappTemplate, templateFileUrl: templateFileUrl || undefined });
         if (result.success) {
             toast({
                 title: "Sukses!",
@@ -122,6 +126,12 @@ export default function AdminInboxPage() {
         setIsSaving(false);
     }
   }
+  
+  const handleFileSelect = (file: { url: string }) => {
+    setTemplateFileUrl(file.url);
+    setIsFileManagerOpen(false);
+  };
+
 
   const formatWhatsappUrl = (number: string, name: string) => {
     let formattedNumber = number.replace(/[^0-9]/g, '');
@@ -129,7 +139,9 @@ export default function AdminInboxPage() {
       formattedNumber = '62' + formattedNumber.substring(1);
     }
 
-    const message = whatsappTemplate.replace(/\[nama\]/g, name);
+    let message = whatsappTemplate.replace(/\[nama\]/g, name);
+    message = message.replace(/\[file\]/g, templateFileUrl || '');
+
     const encodedMessage = encodeURIComponent(message);
     
     return `https://wa.me/${formattedNumber}?text=${encodedMessage}`;
@@ -166,12 +178,18 @@ export default function AdminInboxPage() {
   }
 
   return (
+    <>
+    <FileManagerDialog 
+        open={isFileManagerOpen}
+        onOpenChange={setIsFileManagerOpen}
+        onFileSelect={handleFileSelect}
+    />
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <Card>
         <CardHeader>
           <CardTitle>Templat Pesan WhatsApp</CardTitle>
           <CardDescription>
-            Atur pesan otomatis saat Anda mengklik tombol WhatsApp. Gunakan `[nama]` untuk menyisipkan nama klien.
+            Atur pesan otomatis. Gunakan `[nama]` untuk nama klien dan `[file]` untuk tautan lampiran.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -179,13 +197,39 @@ export default function AdminInboxPage() {
             <Label htmlFor="whatsapp-template">Templat Pesan</Label>
             <Textarea 
               id="whatsapp-template"
-              placeholder="Contoh: Halo [nama], terima kasih telah menghubungi Ningrat Wedding..."
+              placeholder="Contoh: Halo [nama], terima kasih telah menghubungi. Berikut katalog kami: [file]"
               value={whatsappTemplate}
               onChange={(e) => setWhatsappTemplate(e.target.value)}
               className="min-h-[100px]"
               disabled={isSaving}
             />
           </div>
+
+          <div className="space-y-2">
+            <Label>Lampiran File</Label>
+            {templateFileUrl ? (
+                <div className="flex items-center justify-between rounded-md border p-3">
+                    <div className="flex items-center gap-2">
+                        <FileIcon className="h-5 w-5 text-muted-foreground" />
+                        <span className="text-sm text-muted-foreground truncate max-w-xs">
+                            {templateFileUrl.split('/').pop()}
+                        </span>
+                    </div>
+                    <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setTemplateFileUrl(null)}>
+                        <X className="h-4 w-4" />
+                    </Button>
+                </div>
+            ) : (
+                 <Button variant="outline" onClick={() => setIsFileManagerOpen(true)} disabled={isSaving}>
+                    <Library className="mr-2 h-4 w-4" />
+                    Pilih File Lampiran
+                 </Button>
+            )}
+            <p className="text-xs text-muted-foreground">
+              Opsional: Pilih file untuk disertakan sebagai tautan dalam templat.
+            </p>
+          </div>
+          
           <Button onClick={handleSaveTemplate} disabled={isSaving}>
             {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Simpan Templat
@@ -242,5 +286,6 @@ export default function AdminInboxPage() {
         </CardContent>
       </Card>
     </main>
+    </>
   );
 }
