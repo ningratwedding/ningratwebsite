@@ -85,21 +85,12 @@ export default function ContactForm() {
     }
   }, [state, toast, form]);
 
-  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    form.handleSubmit(() => {
-      if (formRef.current) {
-        formAction(new FormData(formRef.current));
-      }
-    })();
-  };
-
   return (
     <Card className="w-full bg-transparent border-none shadow-none">
       <Form {...form}>
         <form
             ref={formRef}
-            onSubmit={handleFormSubmit}
+            action={formAction}
             className="space-y-6"
         >
           <CardContent className="space-y-6 p-0">
@@ -179,9 +170,9 @@ export default function ContactForm() {
                                 checked={field.value?.includes(item.id)}
                                 onCheckedChange={(checked) => {
                                   return checked
-                                    ? field.onChange([...field.value, item.id])
+                                    ? field.onChange([...(field.value || []), item.id])
                                     : field.onChange(
-                                        field.value?.filter(
+                                        (field.value || [])?.filter(
                                           (value) => value !== item.id
                                         )
                                       )
