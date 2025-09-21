@@ -349,21 +349,26 @@ export default function AdminServicesSettingsPage() {
                   {settings.capturedMoments.map((moment, index) => (
                     <Card key={moment.id} className="p-4">
                         <div className="flex gap-4 flex-wrap md:flex-nowrap">
-                            <div className="w-full md:w-32 h-32 flex-shrink-0">
-                                <div className="relative w-full h-full bg-muted rounded-md flex items-center justify-center">
+                            <div className="w-full md:w-48 flex-shrink-0">
+                                <div className="relative w-full aspect-video bg-muted rounded-md flex items-center justify-center">
                                     {moment.imageUrl ? (
                                         <Image src={moment.imageUrl} alt={moment.title} fill className="object-cover rounded-md"/>
                                     ) : (
                                         <ImageIcon className="h-8 w-8 text-muted-foreground" />
                                     )}
                                 </div>
-                                <Button variant="link" className="w-full h-auto p-1 text-xs" onClick={() => openFileManager({ momentId: moment.id })}>
-                                    Ubah Gambar
-                                </Button>
+                                <div className="flex gap-2 mt-2">
+                                    <Button variant="outline" size="sm" className="w-full" onClick={() => openFileManager({ momentId: moment.id })}>
+                                        <Library className="h-4 w-4 mr-2" /> Galeri
+                                    </Button>
+                                    <Button variant="destructive" size="icon" onClick={() => handleMomentChange(moment.id, 'imageUrl', '')}>
+                                        <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                </div>
                             </div>
                             <div className="space-y-3 flex-grow">
-                                <Input value={moment.title} onChange={(e) => handleMomentChange(moment.id, 'title', e.target.value)} disabled={isSaving} />
-                                <Textarea value={moment.description} onChange={(e) => handleMomentChange(moment.id, 'description', e.target.value)} disabled={isSaving} className="text-sm" />
+                                <Input value={moment.title} onChange={(e) => handleMomentChange(moment.id, 'title', e.target.value)} disabled={isSaving} placeholder="Judul Momen" />
+                                <Textarea value={moment.description} onChange={(e) => handleMomentChange(moment.id, 'description', e.target.value)} disabled={isSaving} className="text-sm" placeholder="Deskripsi Momen" />
                             </div>
                             <div className="flex flex-row md:flex-col gap-1">
                                 <Button size="icon" variant="ghost" onClick={() => setSettings(prev => ({...prev, capturedMoments: moveItem(prev.capturedMoments, index, 'up')}))} disabled={isSaving || index === 0}><ArrowUp className="h-4 w-4" /></Button>
