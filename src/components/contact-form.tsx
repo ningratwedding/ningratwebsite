@@ -74,11 +74,6 @@ export default function ContactForm() {
       
       if (state.downloadUrl) {
           window.open(state.downloadUrl, '_blank');
-      } else {
-         toast({
-            title: "Info",
-            description: "Tidak ada file yang dikonfigurasi untuk diunduh.",
-        });
       }
 
     } else if (state.message && (state.errors || !state.success)) {
@@ -97,7 +92,12 @@ export default function ContactForm() {
             ref={formRef}
             action={formAction}
             className="space-y-6"
-            onSubmit={form.handleSubmit(() => formRef.current?.requestSubmit())}
+            onSubmit={(evt) => {
+                form.handleSubmit(() => {
+                    // This will be called on successful validation
+                })(evt);
+                // The native form submission will happen via the 'action' prop
+            }}
         >
           <CardContent className="space-y-6 p-0">
             <FormField
