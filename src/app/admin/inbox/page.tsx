@@ -26,7 +26,6 @@ import {
 } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
-import { MessageSquare } from 'lucide-react';
 
 interface Submission {
   id: string;
@@ -36,6 +35,19 @@ interface Submission {
   whatsapp: string;
   submittedAt: Timestamp;
 }
+
+const WhatsappIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg 
+        xmlns="http://www.w3.org/2000/svg" 
+        width="16" 
+        height="16" 
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        {...props}
+    >
+        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.894 11.892-1.99 0-3.903-.52-5.586-1.459l-6.323 1.751zm7.412-8.995c-.193.124-1.109.559-1.282.627-.172.069-.344.093-.465.093-.232 0-.44-.069-.64-.138-.344-.138-.781-.345-1.172-.621-1.339-.965-2.22-2.179-2.393-2.346-.172-.169-.345-.38-.345-.621s.093-.345.161-.414c.068-.068.161-.184.23-.276.069-.093.115-.115.184-.115.115 0 .207.023.276.023.115.023.23.069.322.184.116.116.322.782.368.828.046.046.069.092.069.138 0 .092-.023.184-.046.207-.023.023-.069.069-.115.115-.046.046-.092.092-.127.127-.023.023-.046.046-.069.069-.046.046-.023.092 0 .138.161.253.943 1.524 2.158 2.506.253.207.483.345.713.414.23.069.414.069.53.046.115-.023.644-.276.782-.345.138-.069.23-.046.322.023.092.069.414.506.46.575.046.068.069.115.069.161.001.093-.023.161-.069.207-.046.046-.345.207-.483.276z"/>
+    </svg>
+)
 
 export default function AdminInboxPage() {
   const { toast } = useToast();
@@ -136,7 +148,7 @@ export default function AdminInboxPage() {
                   <TableCell className="text-right">
                     <Button asChild variant="outline" size="icon">
                         <Link href={formatWhatsappUrl(sub.whatsapp)} target="_blank">
-                            <MessageSquare className="h-4 w-4" />
+                            <WhatsappIcon />
                             <span className="sr-only">Kirim WhatsApp</span>
                         </Link>
                     </Button>
