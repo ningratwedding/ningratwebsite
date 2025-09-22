@@ -163,6 +163,7 @@ export default function AdminInvoicePage() {
                   </TableCell>
                   <TableCell className="text-center">
                      <Badge variant={getStatusVariant(invoice.paymentStatus)} className={cn(
+                       'rounded-sm',
                        getStatusVariant(invoice.paymentStatus) === 'default' && 'bg-green-500 text-white',
                      )}>
                         {invoice.paymentStatus}

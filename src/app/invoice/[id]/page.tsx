@@ -230,7 +230,7 @@ export default function InvoicePage() {
                     </div>
                      <div className="text-left sm:text-right">
                         <h2 className="text-xl font-semibold text-white">{invoice.invoiceNumber}</h2>
-                        <Badge variant={getStatusVariant(invoice.paymentStatus)} className={cn('mt-1', getStatusVariant(invoice.paymentStatus) === 'default' && 'bg-green-500 text-white', 'text-black')}>
+                        <Badge variant={getStatusVariant(invoice.paymentStatus)} className={cn('mt-1 rounded-sm', getStatusVariant(invoice.paymentStatus) === 'default' && 'bg-green-500 text-white', 'text-black')}>
                             {invoice.paymentStatus}
                         </Badge>
                     </div>
