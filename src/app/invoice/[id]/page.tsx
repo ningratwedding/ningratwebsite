@@ -217,104 +217,106 @@ export default function InvoicePage() {
                 </CardContent>
             </Card>
 
-            <div ref={invoiceRef} className="bg-background p-6 sm:p-10 rounded-lg shadow-sm print:shadow-none">
-                <header className="flex flex-col sm:flex-row justify-between items-start gap-8 mb-10">
+            <div ref={invoiceRef} className="bg-background p-0 rounded-lg shadow-sm print:shadow-none overflow-hidden">
+                <header className="flex flex-col sm:flex-row justify-between items-start gap-8 mb-10 bg-black text-white p-6 sm:p-10">
                     <div className="flex items-center gap-4">
-                        {siteSettings?.logoUrl && <img src={siteSettings.logoUrl} alt="logo" className="h-12 w-auto"/>}
+                        {siteSettings?.logoUrl && <img src={siteSettings.logoUrl} alt="logo" className="h-12 w-auto filter invert brightness-0"/>}
                         <div>
                             <h1 className="text-2xl font-bold">{siteSettings?.appName || 'Perusahaan Anda'}</h1>
-                            <p className="text-muted-foreground text-sm">Faktur</p>
+                            <p className="text-muted-foreground text-sm text-gray-300">Faktur</p>
                         </div>
                     </div>
                      <div className="text-left sm:text-right">
-                        <h2 className="text-xl font-semibold text-primary">{invoice.invoiceNumber}</h2>
-                        <Badge variant={getStatusVariant(invoice.paymentStatus)} className={cn('mt-1', getStatusVariant(invoice.paymentStatus) === 'default' && 'bg-green-500 text-white')}>
+                        <h2 className="text-xl font-semibold text-white">{invoice.invoiceNumber}</h2>
+                        <Badge variant={getStatusVariant(invoice.paymentStatus)} className={cn('mt-1', getStatusVariant(invoice.paymentStatus) === 'default' && 'bg-green-500 text-white', 'text-black')}>
                             {invoice.paymentStatus}
                         </Badge>
                     </div>
                 </header>
 
-                <div className="grid sm:grid-cols-2 gap-8 mb-10">
-                    <div>
-                        <h3 className="font-semibold mb-2 text-muted-foreground">DITERBITKAN UNTUK:</h3>
-                        <p className="font-bold">{invoice.clientName}</p>
-                        <p>{invoice.clientEmail}</p>
-                        {invoice.clientWhatsapp && <p>{invoice.clientWhatsapp}</p>}
-                        {invoice.clientAddress && <p className="whitespace-pre-line mt-2">{invoice.clientAddress}</p>}
+                <div className="px-6 sm:px-10">
+                    <div className="grid sm:grid-cols-2 gap-8 mb-10">
+                        <div>
+                            <h3 className="font-semibold mb-2 text-muted-foreground">DITERBITKAN UNTUK:</h3>
+                            <p className="font-bold">{invoice.clientName}</p>
+                            <p>{invoice.clientEmail}</p>
+                            {invoice.clientWhatsapp && <p>{invoice.clientWhatsapp}</p>}
+                            {invoice.clientAddress && <p className="whitespace-pre-line mt-2">{invoice.clientAddress}</p>}
+                        </div>
+                        <div className="text-left sm:text-right">
+                             <h3 className="font-semibold text-muted-foreground">Tanggal Terbit:</h3>
+                             <p>{format(invoice.issueDate.toDate(), 'd MMMM yyyy', { locale: id })}</p>
+                             <h3 className="font-semibold text-muted-foreground mt-4">Jatuh Tempo:</h3>
+                             <p>{format(invoice.dueDate.toDate(), 'd MMMM yyyy', { locale: id })}</p>
+                        </div>
                     </div>
-                    <div className="text-left sm:text-right">
-                         <h3 className="font-semibold text-muted-foreground">Tanggal Terbit:</h3>
-                         <p>{format(invoice.issueDate.toDate(), 'd MMMM yyyy', { locale: id })}</p>
-                         <h3 className="font-semibold text-muted-foreground mt-4">Jatuh Tempo:</h3>
-                         <p>{format(invoice.dueDate.toDate(), 'd MMMM yyyy', { locale: id })}</p>
-                    </div>
-                </div>
 
-                <div className="overflow-x-auto">
-                    <Table>
-                        <TableHeader>
-                        <TableRow>
-                            <TableHead className="w-[50%]">Deskripsi</TableHead>
-                            <TableHead className="text-center">Jumlah</TableHead>
-                            <TableHead className="text-right">Harga Satuan</TableHead>
-                            <TableHead className="text-right">Total</TableHead>
-                        </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                        {invoice.items.map((item, index) => (
-                          <>
-                            <TableRow key={index}>
-                                <TableCell className="font-medium">{item.description}</TableCell>
-                                <TableCell className="text-center">{item.quantity}</TableCell>
-                                <TableCell className="text-right">{currencyFormatter.format(item.price)}</TableCell>
-                                <TableCell className="text-right">{currencyFormatter.format(item.quantity * item.price)}</TableCell>
+                    <div className="overflow-x-auto">
+                        <Table>
+                            <TableHeader>
+                            <TableRow>
+                                <TableHead className="w-[50%]">Deskripsi</TableHead>
+                                <TableHead className="text-center">Jumlah</TableHead>
+                                <TableHead className="text-right">Harga Satuan</TableHead>
+                                <TableHead className="text-right">Total</TableHead>
                             </TableRow>
-                            {item.subItems && item.subItems.length > 0 && (
-                                <TableRow>
-                                    <TableCell colSpan={4} className="py-0 pl-8 pr-4">
-                                        <ul className="list-disc list-inside text-xs text-muted-foreground space-y-1 py-2">
-                                            {item.subItems.map((sub, subIndex) => (
-                                                <li key={subIndex}>{sub.description}</li>
-                                            ))}
-                                        </ul>
-                                    </TableCell>
+                            </TableHeader>
+                            <TableBody>
+                            {invoice.items.map((item, index) => (
+                              <>
+                                <TableRow key={index}>
+                                    <TableCell className="font-medium">{item.description}</TableCell>
+                                    <TableCell className="text-center">{item.quantity}</TableCell>
+                                    <TableCell className="text-right">{currencyFormatter.format(item.price)}</TableCell>
+                                    <TableCell className="text-right">{currencyFormatter.format(item.quantity * item.price)}</TableCell>
                                 </TableRow>
-                            )}
-                          </>
-                        ))}
-                        </TableBody>
-                    </Table>
-                </div>
-                
-                <Separator className="my-6"/>
+                                {item.subItems && item.subItems.length > 0 && (
+                                    <TableRow>
+                                        <TableCell colSpan={4} className="py-0 pl-8 pr-4">
+                                            <ul className="list-disc list-inside text-xs text-muted-foreground space-y-1 py-2">
+                                                {item.subItems.map((sub, subIndex) => (
+                                                    <li key={subIndex}>{sub.description}</li>
+                                                ))}
+                                            </ul>
+                                        </TableCell>
+                                    </TableRow>
+                                )}
+                              </>
+                            ))}
+                            </TableBody>
+                        </Table>
+                    </div>
+                    
+                    <Separator className="my-6"/>
 
-                <div className="flex justify-end">
-                    <div className="grid gap-2 text-right w-full max-w-sm">
-                        <div className="flex justify-between">
-                            <span className="text-muted-foreground">Subtotal</span>
-                            <span>{currencyFormatter.format(subtotal)}</span>
-                        </div>
-                        {downPayment > 0 && (
-                             <div className="flex justify-between">
-                                <span className="text-muted-foreground">Uang Muka (DP)</span>
-                                <span>- {currencyFormatter.format(downPayment)}</span>
+                    <div className="flex justify-end">
+                        <div className="grid gap-2 text-right w-full max-w-sm">
+                            <div className="flex justify-between">
+                                <span className="text-muted-foreground">Subtotal</span>
+                                <span>{currencyFormatter.format(subtotal)}</span>
                             </div>
-                        )}
-                        <div className="flex justify-between font-bold text-lg border-t pt-2 mt-2">
-                            <span>SISA TAGIHAN</span>
-                            <span>{currencyFormatter.format(remainingBalance)}</span>
+                            {downPayment > 0 && (
+                                 <div className="flex justify-between">
+                                    <span className="text-muted-foreground">Uang Muka (DP)</span>
+                                    <span>- {currencyFormatter.format(downPayment)}</span>
+                                </div>
+                            )}
+                            <div className="flex justify-between font-bold text-lg border-t pt-2 mt-2">
+                                <span>SISA TAGIHAN</span>
+                                <span>{currencyFormatter.format(remainingBalance)}</span>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                {invoice.notes && (
-                    <div className="mt-10 pt-6 border-t">
-                        <h4 className="font-semibold mb-2">Catatan:</h4>
-                        <p className="text-sm text-muted-foreground whitespace-pre-line">{invoice.notes}</p>
-                    </div>
-                )}
+                    {invoice.notes && (
+                        <div className="mt-10 pt-6 border-t">
+                            <h4 className="font-semibold mb-2">Catatan:</h4>
+                            <p className="text-sm text-muted-foreground whitespace-pre-line">{invoice.notes}</p>
+                        </div>
+                    )}
+                </div>
                 
-                <footer className="mt-12 pt-6 border-t text-center text-xs text-muted-foreground">
+                <footer className="mt-12 p-6 sm:p-10 border-t text-center text-xs text-muted-foreground">
                     {invoice.myContactInfo && <p className="mb-2 whitespace-pre-line">{invoice.myContactInfo}</p>}
                     {servicesSettings?.tagline && <p className="font-semibold italic mb-2">{servicesSettings.tagline}</p>}
                     <p>Terima kasih telah berbisnis dengan kami!</p>
