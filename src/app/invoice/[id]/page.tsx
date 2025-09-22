@@ -190,13 +190,20 @@ export default function InvoicePage() {
   const remainingBalance = subtotal - downPayment;
 
 
-  const getStatusVariant = (status: Invoice['paymentStatus']) => {
+  const getStatusStyles = (status: Invoice['paymentStatus']): React.CSSProperties => {
+    const baseStyles: React.CSSProperties = {
+        display: 'inline-block',
+        padding: '2px 10px',
+        fontSize: '12px',
+        fontWeight: 600,
+        lineHeight: '1',
+    };
     switch (status) {
-      case 'Lunas': return 'default';
-      case 'Menunggu Pelunasan': return 'secondary';
-      case 'Menunggu DP': return 'secondary';
-      case 'Lewat Tempo': return 'destructive';
-      default: return 'outline';
+      case 'Lunas': return { ...baseStyles, backgroundColor: '#22c55e', color: 'white' };
+      case 'Menunggu Pelunasan': return { ...baseStyles, backgroundColor: '#e2e8f0', color: 'black' };
+      case 'Menunggu DP': return { ...baseStyles, backgroundColor: '#e2e8f0', color: 'black' };
+      case 'Lewat Tempo': return { ...baseStyles, backgroundColor: '#ef4444', color: 'white' };
+      default: return { ...baseStyles, border: '1px solid #e2e8f0', color: 'black' };
     }
   };
 
@@ -230,9 +237,9 @@ export default function InvoicePage() {
                     </div>
                      <div className="text-left sm:text-right">
                         <h2 className="text-xl font-semibold text-white">{invoice.invoiceNumber}</h2>
-                        <Badge variant={getStatusVariant(invoice.paymentStatus)} className={cn('mt-1', getStatusVariant(invoice.paymentStatus) === 'default' && 'bg-green-500 text-white', 'text-black')}>
+                        <div style={getStatusStyles(invoice.paymentStatus)} className="mt-1">
                             {invoice.paymentStatus}
-                        </Badge>
+                        </div>
                     </div>
                 </header>
 
