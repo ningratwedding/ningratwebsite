@@ -700,7 +700,8 @@ const invoiceSchema = z.object({
   dueDate: z.date(),
   items: z.array(invoiceItemSchema).min(1, "Harus ada setidaknya satu item"),
   notes: z.string().optional(),
-  status: z.enum(['Lunas', 'Belum Lunas', 'Lewat Tempo']),
+  paymentStatus: z.enum(['Menunggu DP', 'Menunggu Pelunasan', 'Lunas', 'Lewat Tempo']),
+  downPayment: z.number().optional(),
 });
 
 export type InvoiceFormData = z.infer<typeof invoiceSchema>;

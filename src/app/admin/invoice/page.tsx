@@ -29,7 +29,7 @@ interface Invoice {
   issueDate: Timestamp;
   dueDate: Timestamp;
   items: { description: string; quantity: number; price: number }[];
-  status: 'Lunas' | 'Belum Lunas' | 'Lewat Tempo';
+  paymentStatus: 'Menunggu DP' | 'Menunggu Pelunasan' | 'Lunas' | 'Lewat Tempo';
 }
 
 const currencyFormatter = new Intl.NumberFormat('id-ID', {
@@ -89,10 +89,11 @@ export default function AdminInvoicePage() {
     return items.reduce((total, item) => total + item.quantity * item.price, 0);
   };
 
-  const getStatusVariant = (status: Invoice['status']) => {
+  const getStatusVariant = (status: Invoice['paymentStatus']) => {
     switch (status) {
       case 'Lunas': return 'default';
-      case 'Belum Lunas': return 'secondary';
+      case 'Menunggu Pelunasan': return 'secondary';
+      case 'Menunggu DP': return 'secondary';
       case 'Lewat Tempo': return 'destructive';
       default: return 'outline';
     }
@@ -161,10 +162,10 @@ export default function AdminInvoicePage() {
                     {currencyFormatter.format(calculateTotal(invoice.items))}
                   </TableCell>
                   <TableCell className="text-center">
-                     <Badge variant={getStatusVariant(invoice.status)} className={cn(
-                       getStatusVariant(invoice.status) === 'default' && 'bg-green-500 text-white',
+                     <Badge variant={getStatusVariant(invoice.paymentStatus)} className={cn(
+                       getStatusVariant(invoice.paymentStatus) === 'default' && 'bg-green-500 text-white',
                      )}>
-                        {invoice.status}
+                        {invoice.paymentStatus}
                      </Badge>
                   </TableCell>
                   <TableCell className="text-right">

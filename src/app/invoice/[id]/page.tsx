@@ -37,7 +37,8 @@ interface Invoice {
   dueDate: Timestamp;
   items: InvoiceItem[];
   notes?: string;
-  status: 'Lunas' | 'Belum Lunas' | 'Lewat Tempo';
+  paymentStatus: 'Menunggu DP' | 'Menunggu Pelunasan' | 'Lunas' | 'Lewat Tempo';
+  downPayment?: number;
 }
 
 interface SiteSettings {
@@ -165,12 +166,16 @@ export default function InvoicePage() {
     return notFound();
   }
 
-  const totalAmount = invoice.items.reduce((total, item) => total + item.quantity * item.price, 0);
+  const subtotal = invoice.items.reduce((total, item) => total + item.quantity * item.price, 0);
+  const downPayment = invoice.downPayment || 0;
+  const remainingBalance = subtotal - downPayment;
 
-  const getStatusVariant = (status: Invoice['status']) => {
+
+  const getStatusVariant = (status: Invoice['paymentStatus']) => {
     switch (status) {
       case 'Lunas': return 'default';
-      case 'Belum Lunas': return 'secondary';
+      case 'Menunggu Pelunasan': return 'secondary';
+      case 'Menunggu DP': return 'secondary';
       case 'Lewat Tempo': return 'destructive';
       default: return 'outline';
     }
@@ -206,8 +211,8 @@ export default function InvoicePage() {
                     </div>
                      <div className="text-left sm:text-right">
                         <h2 className="text-xl font-semibold text-primary">{invoice.invoiceNumber}</h2>
-                        <Badge variant={getStatusVariant(invoice.status)} className={cn('mt-1', getStatusVariant(invoice.status) === 'default' && 'bg-green-500 text-white')}>
-                            {invoice.status}
+                        <Badge variant={getStatusVariant(invoice.paymentStatus)} className={cn('mt-1', getStatusVariant(invoice.paymentStatus) === 'default' && 'bg-green-500 text-white')}>
+                            {invoice.paymentStatus}
                         </Badge>
                     </div>
                 </header>
@@ -256,11 +261,17 @@ export default function InvoicePage() {
                     <div className="grid gap-2 text-right w-full max-w-sm">
                         <div className="flex justify-between">
                             <span className="text-muted-foreground">Subtotal</span>
-                            <span>{currencyFormatter.format(totalAmount)}</span>
+                            <span>{currencyFormatter.format(subtotal)}</span>
                         </div>
+                        {downPayment > 0 && (
+                             <div className="flex justify-between">
+                                <span className="text-muted-foreground">Uang Muka (DP)</span>
+                                <span>- {currencyFormatter.format(downPayment)}</span>
+                            </div>
+                        )}
                         <div className="flex justify-between font-bold text-lg border-t pt-2 mt-2">
-                            <span>TOTAL</span>
-                            <span>{currencyFormatter.format(totalAmount)}</span>
+                            <span>SISA TAGIHAN</span>
+                            <span>{currencyFormatter.format(remainingBalance)}</span>
                         </div>
                     </div>
                 </div>

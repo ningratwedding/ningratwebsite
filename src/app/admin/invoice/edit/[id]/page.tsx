@@ -26,6 +26,7 @@ import { AdminTitleContext } from '@/contexts/AdminTitleContext';
 import { cn } from '@/lib/utils';
 import { CalendarIcon, Loader2, PlusCircle, Trash2 } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Separator } from '@/components/ui/separator';
 
 const invoiceItemSchema = z.object({
   id: z.string(),
@@ -43,12 +44,14 @@ const invoiceSchema = z.object({
   dueDate: z.date({ required_error: "Tanggal jatuh tempo wajib diisi." }),
   items: z.array(invoiceItemSchema).min(1, "Harus ada setidaknya satu item"),
   notes: z.string().optional(),
-  status: z.enum(['Lunas', 'Belum Lunas', 'Lewat Tempo']),
+  paymentStatus: z.enum(['Menunggu DP', 'Menunggu Pelunasan', 'Lunas', 'Lewat Tempo']),
+  downPayment: z.coerce.number().optional(),
 });
 
 const currencyFormatter = new Intl.NumberFormat('id-ID', {
   style: 'currency',
   currency: 'IDR',
+  minimumFractionDigits: 0,
 });
 
 export default function EditInvoicePage() {
@@ -124,7 +127,10 @@ export default function EditInvoicePage() {
     }
   };
 
-  const totalAmount = form.watch('items')?.reduce((acc, item) => acc + (item.quantity * item.price), 0) || 0;
+  const watchedItems = form.watch('items');
+  const watchedDownPayment = form.watch('downPayment');
+  const subtotal = watchedItems?.reduce((acc, item) => acc + (item.quantity * item.price), 0) || 0;
+  const remainingBalance = subtotal - (watchedDownPayment || 0);
   
   if (loading) {
     return (
@@ -187,9 +193,21 @@ export default function EditInvoicePage() {
                   <Button type="button" variant="outline" onClick={() => append({ id: uuidv4(), description: '', quantity: 1, price: 0 })}>
                     <PlusCircle className="mr-2 h-4 w-4" /> Tambah Item
                   </Button>
-                </CardContent>
-                <CardContent>
-                    <div className="text-right text-lg font-bold">Total: {currencyFormatter.format(totalAmount)}</div>
+                   <Separator />
+                   <div className="space-y-4 text-right">
+                        <div className="flex justify-end items-center gap-4">
+                            <span className="text-muted-foreground">Subtotal</span>
+                            <span className="font-semibold w-40">{currencyFormatter.format(subtotal)}</span>
+                        </div>
+                        <div className="flex justify-end items-center gap-4">
+                            <span className="text-muted-foreground">DP Dibayar</span>
+                            <span className="font-semibold w-40">{currencyFormatter.format(watchedDownPayment || 0)}</span>
+                        </div>
+                        <div className="flex justify-end items-center gap-4 text-lg">
+                            <span className="font-bold">Sisa Tagihan</span>
+                            <span className="font-bold w-40">{currencyFormatter.format(remainingBalance)}</span>
+                        </div>
+                   </div>
                 </CardContent>
               </Card>
             </div>
@@ -233,12 +251,16 @@ export default function EditInvoicePage() {
                       </Popover><FormMessage />
                     </FormItem>
                   )} />
-                   <FormField control={form.control} name="status" render={({ field }) => (
-                    <FormItem><FormLabel>Status</FormLabel>
+                   <FormField control={form.control} name="downPayment" render={({ field }) => (
+                    <FormItem><FormLabel>Uang Muka (DP)</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem>
+                  )} />
+                   <FormField control={form.control} name="paymentStatus" render={({ field }) => (
+                    <FormItem><FormLabel>Status Pembayaran</FormLabel>
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl><SelectTrigger><SelectValue placeholder="Pilih status" /></SelectTrigger></FormControl>
                         <SelectContent>
-                          <SelectItem value="Belum Lunas">Belum Lunas</SelectItem>
+                           <SelectItem value="Menunggu DP">Menunggu DP</SelectItem>
+                          <SelectItem value="Menunggu Pelunasan">Menunggu Pelunasan</SelectItem>
                           <SelectItem value="Lunas">Lunas</SelectItem>
                           <SelectItem value="Lewat Tempo">Lewat Tempo</SelectItem>
                         </SelectContent>
