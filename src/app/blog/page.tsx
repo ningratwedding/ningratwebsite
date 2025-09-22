@@ -69,13 +69,6 @@ export default function BlogPage() {
   return (
     <div className="bg-[#F8F5F1] animate-in fade-in duration-1000">
         <section className="relative h-[50vh] w-full flex items-center justify-center text-center text-white bg-black">
-            <Image
-                src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=2670&auto=format&fit=crop"
-                alt="Blog"
-                fill
-                className="object-cover opacity-50"
-                priority
-            />
             <div className="relative z-10 p-4 max-w-2xl">
                  <h1 className="font-headline text-4xl md:text-6xl tracking-tight">Jurnal Kami</h1>
                  <p className="mt-4 text-lg text-white/90">Wawasan, cerita, dan inspirasi dari dunia fotografi pernikahan.</p>
