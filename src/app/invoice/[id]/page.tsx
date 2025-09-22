@@ -225,12 +225,12 @@ export default function InvoicePage() {
                         {siteSettings?.logoUrl && <img src={siteSettings.logoUrl} alt="logo" className="h-12 w-auto filter invert brightness-0"/>}
                         <div>
                             <h1 className="text-2xl font-bold">{siteSettings?.appName || 'Perusahaan Anda'}</h1>
-                            <p className="text-muted-foreground text-sm text-gray-300">Faktur</p>
+                            <p className="text-muted-foreground text-sm text-gray-300">Invoice</p>
                         </div>
                     </div>
                      <div className="text-left sm:text-right">
                         <h2 className="text-xl font-semibold text-white">{invoice.invoiceNumber}</h2>
-                        <Badge variant={getStatusVariant(invoice.paymentStatus)} className={cn('mt-1 rounded-sm', getStatusVariant(invoice.paymentStatus) === 'default' && 'bg-green-500 text-white', 'text-black')}>
+                        <Badge variant={getStatusVariant(invoice.paymentStatus)} className={cn('mt-1', getStatusVariant(invoice.paymentStatus) === 'default' && 'bg-green-500 text-white', 'text-black')}>
                             {invoice.paymentStatus}
                         </Badge>
                     </div>
