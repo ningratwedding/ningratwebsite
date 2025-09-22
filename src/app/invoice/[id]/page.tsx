@@ -109,10 +109,6 @@ export default function InvoicePage() {
     fetchInvoiceAndSettings();
   }, [invoiceId, toast]);
 
-  const handlePrint = () => {
-    window.print();
-  };
-
   const handleDownload = async () => {
     if (!invoiceRef.current) return;
     setIsProcessing(true);
@@ -214,11 +210,10 @@ export default function InvoicePage() {
              <Card className="w-full mx-auto mb-4 print:hidden">
                 <CardHeader>
                     <CardTitle>Faktur {invoice.invoiceNumber}</CardTitle>
-                    <CardDescription>Bagikan, cetak, atau unduh faktur Anda.</CardDescription>
+                    <CardDescription>Bagikan atau unduh faktur Anda.</CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-wrap gap-2">
                     <Button onClick={handleShare}><Share2 className="mr-2"/> Bagikan</Button>
-                    <Button variant="outline" onClick={handlePrint}><Printer className="mr-2"/> Cetak</Button>
                     <Button variant="outline" onClick={handleDownload} disabled={isProcessing}>
                         {isProcessing ? <Loader2 className="mr-2 animate-spin"/> : <Download className="mr-2"/>}
                         Unduh PDF
