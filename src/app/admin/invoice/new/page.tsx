@@ -36,6 +36,8 @@ const invoiceSchema = z.object({
   clientName: z.string().min(1, "Nama klien wajib diisi"),
   clientEmail: z.string().email("Email klien tidak valid"),
   clientAddress: z.string().optional(),
+  clientWhatsapp: z.string().optional(),
+  myContactInfo: z.string().optional(),
   invoiceNumber: z.string().min(1, "Nomor faktur wajib diisi"),
   issueDate: z.date({ required_error: "Tanggal penerbitan wajib diisi." }),
   dueDate: z.date({ required_error: "Tanggal jatuh tempo wajib diisi." }),
@@ -67,6 +69,8 @@ export default function NewInvoicePage() {
       clientName: '',
       clientEmail: '',
       clientAddress: '',
+      clientWhatsapp: '',
+      myContactInfo: 'Ningrat Wedding\nJalan Bahagia No. 42, Jakarta\nEmail: contact@ningrat.com\nTelepon: 0812-3456-7890',
       invoiceNumber: `INV-${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-`,
       issueDate: new Date(),
       dueDate: new Date(new Date().setDate(new Date().getDate() + 14)),
@@ -121,6 +125,9 @@ export default function NewInvoicePage() {
                   )} />
                   <FormField control={form.control} name="clientEmail" render={({ field }) => (
                     <FormItem><FormLabel>Email Klien</FormLabel><FormControl><Input type="email" placeholder="klien@contoh.com" {...field} /></FormControl><FormMessage /></FormItem>
+                  )} />
+                  <FormField control={form.control} name="clientWhatsapp" render={({ field }) => (
+                    <FormItem className="sm:col-span-2"><FormLabel>WhatsApp Klien (Opsional)</FormLabel><FormControl><Input type="tel" placeholder="081234567890" {...field} /></FormControl><FormMessage /></FormItem>
                   )} />
                   <FormField control={form.control} name="clientAddress" render={({ field }) => (
                     <FormItem className="sm:col-span-2"><FormLabel>Alamat Klien (Opsional)</FormLabel><FormControl><Textarea placeholder="Alamat lengkap klien" {...field} /></FormControl><FormMessage /></FormItem>
@@ -231,8 +238,11 @@ export default function NewInvoicePage() {
                 </CardContent>
               </Card>
               <Card>
-                <CardHeader><CardTitle>Catatan</CardTitle></CardHeader>
-                <CardContent>
+                <CardHeader><CardTitle>Informasi Bisnis & Catatan</CardTitle></CardHeader>
+                <CardContent className="space-y-4">
+                  <FormField control={form.control} name="myContactInfo" render={({ field }) => (
+                    <FormItem><FormLabel>Informasi Kontak Anda (Opsional)</FormLabel><FormControl><Textarea placeholder="Nama Bisnis, Alamat, Email, Telepon" {...field} className="min-h-24" /></FormControl><FormMessage /></FormItem>
+                  )} />
                   <FormField control={form.control} name="notes" render={({ field }) => (
                     <FormItem><FormLabel>Catatan Tambahan (Opsional)</FormLabel><FormControl><Textarea placeholder="Catatan untuk klien..." {...field} /></FormControl><FormMessage /></FormItem>
                   )} />

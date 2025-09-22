@@ -39,6 +39,8 @@ const invoiceSchema = z.object({
   clientName: z.string().min(1, "Nama klien wajib diisi"),
   clientEmail: z.string().email("Email klien tidak valid"),
   clientAddress: z.string().optional(),
+  clientWhatsapp: z.string().optional(),
+  myContactInfo: z.string().optional(),
   invoiceNumber: z.string().min(1, "Nomor faktur wajib diisi"),
   issueDate: z.date({ required_error: "Tanggal penerbitan wajib diisi." }),
   dueDate: z.date({ required_error: "Tanggal jatuh tempo wajib diisi." }),
@@ -163,6 +165,9 @@ export default function EditInvoicePage() {
                   <FormField control={form.control} name="clientEmail" render={({ field }) => (
                     <FormItem><FormLabel>Email Klien</FormLabel><FormControl><Input type="email" {...field} /></FormControl><FormMessage /></FormItem>
                   )} />
+                   <FormField control={form.control} name="clientWhatsapp" render={({ field }) => (
+                    <FormItem className="sm:col-span-2"><FormLabel>WhatsApp Klien (Opsional)</FormLabel><FormControl><Input type="tel" {...field} /></FormControl><FormMessage /></FormItem>
+                  )} />
                   <FormField control={form.control} name="clientAddress" render={({ field }) => (
                     <FormItem className="sm:col-span-2"><FormLabel>Alamat Klien (Opsional)</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
                   )} />
@@ -270,10 +275,13 @@ export default function EditInvoicePage() {
                 </CardContent>
               </Card>
               <Card>
-                <CardHeader><CardTitle>Catatan</CardTitle></CardHeader>
-                <CardContent>
+                <CardHeader><CardTitle>Informasi Bisnis & Catatan</CardTitle></CardHeader>
+                <CardContent className="space-y-4">
+                  <FormField control={form.control} name="myContactInfo" render={({ field }) => (
+                      <FormItem><FormLabel>Informasi Kontak Anda (Opsional)</FormLabel><FormControl><Textarea {...field} className="min-h-24"/></FormControl><FormMessage /></FormItem>
+                  )} />
                   <FormField control={form.control} name="notes" render={({ field }) => (
-                    <FormItem><FormLabel>Catatan Tambahan</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Catatan Tambahan (Opsional)</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
                   )} />
                 </CardContent>
               </Card>

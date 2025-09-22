@@ -695,6 +695,8 @@ const invoiceSchema = z.object({
   clientName: z.string().min(1, "Nama klien wajib diisi"),
   clientEmail: z.string().email("Email klien tidak valid"),
   clientAddress: z.string().optional(),
+  clientWhatsapp: z.string().optional(),
+  myContactInfo: z.string().optional(),
   invoiceNumber: z.string(),
   issueDate: z.date(),
   dueDate: z.date(),
@@ -709,6 +711,7 @@ export type InvoiceFormData = z.infer<typeof invoiceSchema>;
 export async function saveInvoice(data: InvoiceFormData) {
   const validatedFields = invoiceSchema.safeParse(data);
   if (!validatedFields.success) {
+    console.error("Validation Errors:", validatedFields.error.flatten().fieldErrors);
     return { success: false, message: 'Data faktur tidak valid.', errors: validatedFields.error.flatten().fieldErrors };
   }
   try {
@@ -724,6 +727,7 @@ export async function saveInvoice(data: InvoiceFormData) {
 export async function updateInvoice(id: string, data: InvoiceFormData) {
   const validatedFields = invoiceSchema.safeParse(data);
   if (!validatedFields.success) {
+     console.error("Validation Errors:", validatedFields.error.flatten().fieldErrors);
     return { success: false, message: 'Data faktur tidak valid.', errors: validatedFields.error.flatten().fieldErrors };
   }
   try {
@@ -751,5 +755,3 @@ export async function deleteInvoice(id: string) {
     return { success: false, message: 'Gagal menghapus faktur.' };
   }
 }
-
-    

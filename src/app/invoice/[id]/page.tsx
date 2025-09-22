@@ -32,6 +32,8 @@ interface Invoice {
   clientName: string;
   clientEmail: string;
   clientAddress?: string;
+  clientWhatsapp?: string;
+  myContactInfo?: string;
   invoiceNumber: string;
   issueDate: Timestamp;
   dueDate: Timestamp;
@@ -222,7 +224,8 @@ export default function InvoicePage() {
                         <h3 className="font-semibold mb-2 text-muted-foreground">DITERBITKAN UNTUK:</h3>
                         <p className="font-bold">{invoice.clientName}</p>
                         <p>{invoice.clientEmail}</p>
-                        {invoice.clientAddress && <p className="whitespace-pre-line">{invoice.clientAddress}</p>}
+                        {invoice.clientWhatsapp && <p>{invoice.clientWhatsapp}</p>}
+                        {invoice.clientAddress && <p className="whitespace-pre-line mt-2">{invoice.clientAddress}</p>}
                     </div>
                     <div className="text-left sm:text-right">
                          <h3 className="font-semibold text-muted-foreground">Tanggal Terbit:</h3>
@@ -284,6 +287,7 @@ export default function InvoicePage() {
                 )}
                 
                 <footer className="mt-12 pt-6 border-t text-center text-xs text-muted-foreground">
+                    {invoice.myContactInfo && <p className="mb-2 whitespace-pre-line">{invoice.myContactInfo}</p>}
                     <p>Terima kasih telah berbisnis dengan kami!</p>
                 </footer>
             </div>
