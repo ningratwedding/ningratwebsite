@@ -130,6 +130,7 @@ export default function EditInvoicePage() {
           const data = docSnap.data();
           form.reset({
             ...data,
+            invoiceNumber: data.invoiceNumber,
             issueDate: (data.issueDate as Timestamp).toDate(),
             dueDate: (data.dueDate as Timestamp).toDate(),
             items: data.items.map((item: any) => ({ ...item, id: item.id || uuidv4() })),
@@ -338,3 +339,5 @@ export default function EditInvoicePage() {
     </main>
   );
 }
+
+    

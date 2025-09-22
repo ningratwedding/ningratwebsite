@@ -117,7 +117,7 @@ export default function NewInvoicePage() {
       clientAddress: '',
       clientWhatsapp: '',
       myContactInfo: 'Ningrat Wedding\nJalan Bahagia No. 42, Jakarta\nEmail: contact@ningrat.com\nTelepon: 0812-3456-7890',
-      invoiceNumber: `INV-${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-`,
+      invoiceNumber: `Ningrat Wedding INV-${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-`,
       issueDate: new Date(),
       dueDate: new Date(new Date().setDate(new Date().getDate() + 14)),
       items: [{ id: uuidv4(), description: '', quantity: 1, price: 0, subItems: [] }],
@@ -301,3 +301,5 @@ export default function NewInvoicePage() {
     </main>
   );
 }
+
+    
