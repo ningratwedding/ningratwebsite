@@ -29,8 +29,9 @@ export default function RootLayout({
   const pathname = headers().get('x-next-pathname') || '';
   const isAdminPage = pathname.startsWith('/admin');
   const isLoginPage = pathname.startsWith('/login');
+  const isInvoicePage = pathname.startsWith('/invoice');
 
-  const showHeaderFooter = !isAdminPage && !isLoginPage;
+  const showHeaderFooter = !isAdminPage && !isLoginPage && !isInvoicePage;
   const isDarkPage = pathname === '/portfolio' || pathname === '/about';
 
   return (
@@ -42,7 +43,7 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet" />
         <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet" />
       </head>
-      <body className={cn("font-body antialiased h-full flex flex-col", (isAdminPage || isLoginPage) ? "bg-muted/40" : (isDarkPage ? "bg-background" : "bg-[#F8F5F1]"))}>
+      <body className={cn("font-body antialiased h-full flex flex-col", (isAdminPage || isLoginPage || isInvoicePage) ? "bg-muted/40" : (isDarkPage ? "bg-background" : "bg-[#F8F5F1]"))}>
         <div id="root-layout-content" className="flex flex-col flex-grow">
           {showHeaderFooter && <Header />}
           <main className={cn("flex-grow", !showHeaderFooter && "h-full")}>{children}</main>

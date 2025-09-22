@@ -79,7 +79,7 @@ const generateSlug = (title: string) => {
 
 const contentBlockSchema = z.object({
   id: z.string(),
-  type: z.enum(['text', 'h1', 'h2', 'image_full', 'image_split', 'image_tri', 'title_and_paragraph']),
+  type: z.enum(['text', 'h1', 'h2', 'image_full', 'image_split', 'image_tri', 'title_and_paragraph', 'video', 'link']),
   content: z.any(),
 });
 
@@ -680,5 +680,73 @@ export async function deleteBlogPost(id: string) {
   } catch (error) {
     console.error('Gagal menghapus postingan blog: ', error);
     return { success: false, message: 'Gagal menghapus postingan blog.' };
+  }
+}
+
+// Invoice Actions
+const invoiceItemSchema = z.object({
+  id: z.string(),
+  description: z.string().min(1, 'Deskripsi tidak boleh kosong'),
+  quantity: z.number().min(0.01, 'Kuantitas harus lebih dari 0'),
+  price: z.number().min(0, 'Harga tidak boleh negatif'),
+});
+
+const invoiceSchema = z.object({
+  clientName: z.string().min(1, "Nama klien wajib diisi"),
+  clientEmail: z.string().email("Email klien tidak valid"),
+  clientAddress: z.string().optional(),
+  invoiceNumber: z.string(),
+  issueDate: z.date(),
+  dueDate: z.date(),
+  items: z.array(invoiceItemSchema).min(1, "Harus ada setidaknya satu item"),
+  notes: z.string().optional(),
+  status: z.enum(['Lunas', 'Belum Lunas', 'Lewat Tempo']),
+});
+
+export type InvoiceFormData = z.infer<typeof invoiceSchema>;
+
+export async function saveInvoice(data: InvoiceFormData) {
+  const validatedFields = invoiceSchema.safeParse(data);
+  if (!validatedFields.success) {
+    return { success: false, message: 'Data faktur tidak valid.', errors: validatedFields.error.flatten().fieldErrors };
+  }
+  try {
+    await addDoc(collection(db, 'invoices'), { ...validatedFields.data, createdAt: serverTimestamp() });
+    revalidatePath('/admin/invoice');
+    return { success: true, message: 'Faktur berhasil disimpan!' };
+  } catch (e) {
+    console.error('Gagal menyimpan faktur: ', e);
+    return { success: false, message: 'Gagal menyimpan faktur.' };
+  }
+}
+
+export async function updateInvoice(id: string, data: InvoiceFormData) {
+  const validatedFields = invoiceSchema.safeParse(data);
+  if (!validatedFields.success) {
+    return { success: false, message: 'Data faktur tidak valid.', errors: validatedFields.error.flatten().fieldErrors };
+  }
+  try {
+    const invoiceRef = doc(db, 'invoices', id);
+    await updateDoc(invoiceRef, { ...validatedFields.data, updatedAt: serverTimestamp() });
+    revalidatePath('/admin/invoice');
+    revalidatePath(`/invoice/${id}`);
+    return { success: true, message: 'Faktur berhasil diperbarui!' };
+  } catch (e) {
+    console.error('Gagal memperbarui faktur: ', e);
+    return { success: false, message: 'Gagal memperbarui faktur.' };
+  }
+}
+
+export async function deleteInvoice(id: string) {
+  if (!id) {
+    return { success: false, message: 'ID faktur diperlukan.' };
+  }
+  try {
+    await deleteDoc(doc(db, 'invoices', id));
+    revalidatePath('/admin/invoice');
+    return { success: true, message: 'Faktur berhasil dihapus.' };
+  } catch (error) {
+    console.error('Gagal menghapus faktur: ', error);
+    return { success: false, message: 'Gagal menghapus faktur.' };
   }
 }
