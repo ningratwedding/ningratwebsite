@@ -26,6 +26,7 @@ interface InvoiceSubItem {
 }
 
 interface InvoiceItem {
+  id: string;
   description: string;
   quantity: number;
   price: number;
@@ -263,8 +264,8 @@ export default function InvoicePage() {
                             </TableHeader>
                             <TableBody>
                             {invoice.items.map((item, index) => (
-                              <>
-                                <TableRow key={index}>
+                              <React.Fragment key={item.id || index}>
+                                <TableRow>
                                     <TableCell className="font-medium">{item.description}</TableCell>
                                     <TableCell className="text-center">{item.quantity}</TableCell>
                                     <TableCell className="text-right">{currencyFormatter.format(item.price)}</TableCell>
@@ -281,7 +282,7 @@ export default function InvoicePage() {
                                         </TableCell>
                                     </TableRow>
                                 )}
-                              </>
+                              </React.Fragment>
                             ))}
                             </TableBody>
                         </Table>
