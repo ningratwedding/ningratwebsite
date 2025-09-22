@@ -18,7 +18,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Loader2, Download, Printer, Share2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
-import { getSiteSettings } from '@/lib/actions';
+import { getSiteSettings, getServicesSettings } from '@/lib/actions';
 import { cn } from '@/lib/utils';
 
 interface InvoiceSubItem {
@@ -53,6 +53,10 @@ interface SiteSettings {
     logoUrl?: string;
 }
 
+interface ServicesSettings {
+    tagline?: string;
+}
+
 const currencyFormatter = new Intl.NumberFormat('id-ID', {
   style: 'currency',
   currency: 'IDR',
@@ -64,6 +68,7 @@ export default function InvoicePage() {
   const invoiceId = params.id as string;
   const [invoice, setInvoice] = useState<Invoice | null>(null);
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
+  const [servicesSettings, setServicesSettings] = useState<ServicesSettings | null>(null);
   const [loading, setLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
   const invoiceRef = useRef<HTMLDivElement>(null);
@@ -76,17 +81,22 @@ export default function InvoicePage() {
         return;
       }
       try {
-        const [invoiceDoc, settings] = await Promise.all([
+        const [invoiceDoc, siteData, servicesData] = await Promise.all([
             getDoc(doc(db, 'invoices', invoiceId)),
-            getSiteSettings()
+            getSiteSettings(),
+            getServicesSettings(),
         ]);
         
         if (invoiceDoc.exists()) {
           setInvoice({ id: invoiceDoc.id, ...invoiceDoc.data() } as Invoice);
         }
-        if (settings) {
-            setSiteSettings(settings as SiteSettings);
+        if (siteData) {
+            setSiteSettings(siteData as SiteSettings);
         }
+        if (servicesData) {
+            setServicesSettings(servicesData as ServicesSettings);
+        }
+
       } catch (error) {
         console.error("Gagal mengambil data:", error);
         toast({ title: "Error", description: "Gagal memuat data faktur.", variant: "destructive" });
@@ -306,6 +316,7 @@ export default function InvoicePage() {
                 
                 <footer className="mt-12 pt-6 border-t text-center text-xs text-muted-foreground">
                     {invoice.myContactInfo && <p className="mb-2 whitespace-pre-line">{invoice.myContactInfo}</p>}
+                    {servicesSettings?.tagline && <p className="font-semibold italic mb-2">{servicesSettings.tagline}</p>}
                     <p>Terima kasih telah berbisnis dengan kami!</p>
                 </footer>
             </div>
