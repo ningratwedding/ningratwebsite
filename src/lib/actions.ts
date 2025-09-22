@@ -685,11 +685,17 @@ export async function deleteBlogPost(id: string) {
 }
 
 // Invoice Actions
+const subItemSchema = z.object({
+  id: z.string(),
+  description: z.string().min(1, 'Deskripsi sub-item tidak boleh kosong'),
+});
+
 const invoiceItemSchema = z.object({
   id: z.string(),
   description: z.string().min(1, 'Deskripsi tidak boleh kosong'),
   quantity: z.number().min(0.01, 'Kuantitas harus lebih dari 0'),
   price: z.number().min(0, 'Harga tidak boleh negatif'),
+  subItems: z.array(subItemSchema).optional(),
 });
 
 const invoiceSchema = z.object({

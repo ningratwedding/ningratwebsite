@@ -25,11 +25,17 @@ import { cn } from '@/lib/utils';
 import { CalendarIcon, Loader2, PlusCircle, Trash2 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 
+const subItemSchema = z.object({
+  id: z.string(),
+  description: z.string().min(1, 'Deskripsi sub-item tidak boleh kosong'),
+});
+
 const invoiceItemSchema = z.object({
   id: z.string(),
   description: z.string().min(1, 'Deskripsi tidak boleh kosong'),
   quantity: z.coerce.number().min(0.01, 'Kuantitas harus lebih dari 0'),
   price: z.coerce.number().min(0, 'Harga tidak boleh negatif'),
+  subItems: z.array(subItemSchema).optional(),
 });
 
 const invoiceSchema = z.object({
@@ -53,6 +59,46 @@ const currencyFormatter = new Intl.NumberFormat('id-ID', {
   minimumFractionDigits: 0,
 });
 
+const InvoiceItemRow = ({ itemIndex, control, remove, fieldsLength }: { itemIndex: number, control: any, remove: (index: number) => void, fieldsLength: number }) => {
+  const { fields: subItemFields, append: appendSubItem, remove: removeSubItem } = useFieldArray({
+    control,
+    name: `items.${itemIndex}.subItems`
+  });
+
+  return (
+    <div className="rounded-lg border p-4 mb-4">
+       <div className="grid grid-cols-12 gap-2 items-start">
+           <FormField control={control} name={`items.${itemIndex}.description`} render={({ field }) => (
+              <FormItem className="col-span-12 sm:col-span-6"><FormControl><Input placeholder="Deskripsi item utama" {...field} /></FormControl><FormMessage /></FormItem>
+            )} />
+            <FormField control={control} name={`items.${itemIndex}.quantity`} render={({ field }) => (
+              <FormItem className="col-span-6 sm:col-span-2"><FormControl><Input type="number" placeholder="Jml" {...field} /></FormControl><FormMessage /></FormItem>
+            )} />
+            <FormField control={control} name={`items.${itemIndex}.price`} render={({ field }) => (
+              <FormItem className="col-span-6 sm:col-span-3"><FormControl><Input type="number" placeholder="Harga" {...field} /></FormControl><FormMessage /></FormItem>
+            )} />
+            <Button type="button" variant="destructive" size="icon" className="col-span-12 sm:col-span-1 sm:ml-auto" onClick={() => remove(itemIndex)} disabled={fieldsLength <= 1}>
+              <Trash2 className="h-4 w-4" />
+            </Button>
+       </div>
+        <div className="pl-4 mt-3 space-y-2">
+          {subItemFields.map((subItem, subIndex) => (
+             <div key={subItem.id} className="flex items-center gap-2">
+                <span className="text-muted-foreground">&#9500;</span>
+                <FormField control={control} name={`items.${itemIndex}.subItems.${subIndex}.description`} render={({ field }) => (
+                  <FormItem className="flex-grow"><FormControl><Input placeholder="Deskripsi sub-item" {...field} className="h-8" /></FormControl><FormMessage /></FormItem>
+                )} />
+                <Button type="button" variant="ghost" size="icon" className="h-8 w-8" onClick={() => removeSubItem(subIndex)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+             </div>
+          ))}
+           <Button type="button" size="sm" variant="ghost" onClick={() => appendSubItem({ id: uuidv4(), description: '' })}>
+              <PlusCircle className="mr-2 h-4 w-4" /> Tambah Sub-Item
+          </Button>
+        </div>
+    </div>
+  )
+}
+
 export default function NewInvoicePage() {
   const router = useRouter();
   const { toast } = useToast();
@@ -74,7 +120,7 @@ export default function NewInvoicePage() {
       invoiceNumber: `INV-${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-`,
       issueDate: new Date(),
       dueDate: new Date(new Date().setDate(new Date().getDate() + 14)),
-      items: [{ id: uuidv4(), description: '', quantity: 1, price: 0 }],
+      items: [{ id: uuidv4(), description: '', quantity: 1, price: 0, subItems: [] }],
       notes: 'Terima kasih atas pembayaran Anda. Jika ada pertanyaan, jangan ragu untuk menghubungi kami.',
       paymentStatus: 'Menunggu DP',
       downPayment: 0,
@@ -140,25 +186,18 @@ export default function NewInvoicePage() {
                   <CardTitle>Item Faktur</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="space-y-4">
+                  <div>
                     {fields.map((field, index) => (
-                      <div key={field.id} className="grid grid-cols-12 gap-2 items-start">
-                        <FormField control={form.control} name={`items.${index}.description`} render={({ field }) => (
-                          <FormItem className="col-span-12 sm:col-span-6"><FormControl><Input placeholder="Deskripsi item" {...field} /></FormControl><FormMessage /></FormItem>
-                        )} />
-                        <FormField control={form.control} name={`items.${index}.quantity`} render={({ field }) => (
-                          <FormItem className="col-span-6 sm:col-span-2"><FormControl><Input type="number" placeholder="Jml" {...field} /></FormControl><FormMessage /></FormItem>
-                        )} />
-                        <FormField control={form.control} name={`items.${index}.price`} render={({ field }) => (
-                          <FormItem className="col-span-6 sm:col-span-3"><FormControl><Input type="number" placeholder="Harga" {...field} /></FormControl><FormMessage /></FormItem>
-                        )} />
-                        <Button type="button" variant="destructive" size="icon" className="col-span-12 sm:col-span-1 mt-2 sm:mt-0" onClick={() => remove(index)} disabled={fields.length <= 1}>
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
+                      <InvoiceItemRow
+                        key={field.id}
+                        itemIndex={index}
+                        control={form.control}
+                        remove={remove}
+                        fieldsLength={fields.length}
+                      />
                     ))}
                   </div>
-                  <Button type="button" variant="outline" onClick={() => append({ id: uuidv4(), description: '', quantity: 1, price: 0 })}>
+                  <Button type="button" variant="outline" onClick={() => append({ id: uuidv4(), description: '', quantity: 1, price: 0, subItems: [] })}>
                     <PlusCircle className="mr-2 h-4 w-4" /> Tambah Item
                   </Button>
                   <Separator />

@@ -21,10 +21,15 @@ import { Badge } from '@/components/ui/badge';
 import { getSiteSettings } from '@/lib/actions';
 import { cn } from '@/lib/utils';
 
+interface InvoiceSubItem {
+  description: string;
+}
+
 interface InvoiceItem {
   description: string;
   quantity: number;
   price: number;
+  subItems?: InvoiceSubItem[];
 }
 
 interface Invoice {
@@ -247,12 +252,25 @@ export default function InvoicePage() {
                         </TableHeader>
                         <TableBody>
                         {invoice.items.map((item, index) => (
+                          <>
                             <TableRow key={index}>
                                 <TableCell className="font-medium">{item.description}</TableCell>
                                 <TableCell className="text-center">{item.quantity}</TableCell>
                                 <TableCell className="text-right">{currencyFormatter.format(item.price)}</TableCell>
                                 <TableCell className="text-right">{currencyFormatter.format(item.quantity * item.price)}</TableCell>
                             </TableRow>
+                            {item.subItems && item.subItems.length > 0 && (
+                                <TableRow>
+                                    <TableCell colSpan={4} className="py-0 pl-8 pr-4">
+                                        <ul className="list-disc list-inside text-xs text-muted-foreground space-y-1 py-2">
+                                            {item.subItems.map((sub, subIndex) => (
+                                                <li key={subIndex}>{sub.description}</li>
+                                            ))}
+                                        </ul>
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                          </>
                         ))}
                         </TableBody>
                     </Table>
