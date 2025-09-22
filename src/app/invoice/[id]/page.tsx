@@ -1,6 +1,7 @@
 
 'use client';
 
+import * as React from 'react';
 import { useEffect, useState, useRef } from 'react';
 import { useParams, notFound } from 'next/navigation';
 import { doc, getDoc, Timestamp } from 'firebase/firestore';
