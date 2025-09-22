@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -68,7 +67,7 @@ export default function BlogPage() {
 
   return (
     <div className="bg-[#F8F5F1] animate-in fade-in duration-1000">
-        <section className="relative h-[50vh] w-full flex items-center justify-center text-center text-white" style={{ backgroundColor: '#B2AC88' }}>
+        <section className="relative h-[50vh] w-full flex items-center justify-center text-center text-white" style={{ backgroundColor: '#4A5C53' }}>
             <div className="relative z-10 p-4 max-w-2xl">
                  <h1 className="font-headline text-4xl md:text-6xl tracking-tight">Jurnal Kami</h1>
                  <p className="mt-4 text-lg text-white/90">Wawasan, cerita, dan inspirasi dari dunia fotografi pernikahan.</p>
