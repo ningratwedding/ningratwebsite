@@ -1,4 +1,5 @@
 
+
 'use server';
 
 import { z } from 'zod';
@@ -693,7 +694,7 @@ const invoiceItemSchema = z.object({
 
 const invoiceSchema = z.object({
   clientName: z.string().min(1, "Nama klien wajib diisi"),
-  clientEmail: z.string().email("Email klien tidak valid"),
+  clientEmail: z.string().email("Email klien tidak valid").optional().or(z.literal('')),
   clientAddress: z.string().optional(),
   clientWhatsapp: z.string().optional(),
   myContactInfo: z.string().optional(),

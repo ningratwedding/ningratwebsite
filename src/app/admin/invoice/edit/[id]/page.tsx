@@ -37,7 +37,7 @@ const invoiceItemSchema = z.object({
 
 const invoiceSchema = z.object({
   clientName: z.string().min(1, "Nama klien wajib diisi"),
-  clientEmail: z.string().email("Email klien tidak valid"),
+  clientEmail: z.string().email("Email klien tidak valid").optional().or(z.literal('')),
   clientAddress: z.string().optional(),
   clientWhatsapp: z.string().optional(),
   myContactInfo: z.string().optional(),
@@ -163,7 +163,7 @@ export default function EditInvoicePage() {
                     <FormItem><FormLabel>Nama Klien</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                   )} />
                   <FormField control={form.control} name="clientEmail" render={({ field }) => (
-                    <FormItem><FormLabel>Email Klien</FormLabel><FormControl><Input type="email" {...field} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Email Klien (Opsional)</FormLabel><FormControl><Input type="email" {...field} /></FormControl><FormMessage /></FormItem>
                   )} />
                    <FormField control={form.control} name="clientWhatsapp" render={({ field }) => (
                     <FormItem className="sm:col-span-2"><FormLabel>WhatsApp Klien (Opsional)</FormLabel><FormControl><Input type="tel" {...field} /></FormControl><FormMessage /></FormItem>
