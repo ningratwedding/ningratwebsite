@@ -219,14 +219,14 @@ export default function FileManagerPage() {
               alt={file.key}
               width={200}
               height={200}
-              className="h-full w-full object-cover transition-transform group-hover:scale-105"
+              className="h-auto w-full object-contain transition-transform group-hover:scale-105"
             />
        )
     }
     
     if (file.type === 'video') {
        return (
-         <div className="w-full h-full bg-black flex items-center justify-center">
+         <div className="w-full h-full bg-black flex items-center justify-center aspect-square">
             <FileVideo className="h-10 w-10 text-muted-foreground" />
          </div>
        )
@@ -234,7 +234,7 @@ export default function FileManagerPage() {
     
     if (file.type === 'audio') {
         return (
-          <div className="w-full h-full bg-muted-foreground/20 flex items-center justify-center">
+          <div className="w-full h-full bg-muted-foreground/20 flex items-center justify-center aspect-square">
              <Music className="h-10 w-10 text-muted-foreground" />
           </div>
         )
@@ -242,14 +242,14 @@ export default function FileManagerPage() {
      
     if (file.type === 'document') {
         return (
-          <div className="w-full h-full bg-blue-100 flex items-center justify-center">
+          <div className="w-full h-full bg-blue-100 flex items-center justify-center aspect-square">
              <FileIcon className="h-10 w-10 text-blue-500" />
           </div>
         )
     }
 
     return (
-      <div className="w-full h-full bg-muted flex items-center justify-center">
+      <div className="w-full h-full bg-muted flex items-center justify-center aspect-square">
         <ImageIcon className="h-10 w-10 text-muted-foreground" />
       </div>
     );
@@ -345,7 +345,7 @@ export default function FileManagerPage() {
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
                       {filteredFiles.map((file) => (
                         <div key={file.key} className="group relative">
-                          <div className="aspect-square w-full overflow-hidden rounded-lg bg-muted shadow-md">
+                          <div className="w-full overflow-hidden rounded-lg bg-muted shadow-md flex items-center justify-center">
                             {renderFilePreview(file)}
                           </div>
                           <div className="mt-2 text-xs truncate text-muted-foreground">{file.key.replace('uploads/', '')}</div>
