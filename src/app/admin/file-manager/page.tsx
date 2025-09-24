@@ -13,6 +13,7 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
 import { Copy, Check, Trash2, Loader2, HardDrive, FileVideo, ImageIcon, Upload, Music, File as FileIcon, Edit } from "lucide-react";
