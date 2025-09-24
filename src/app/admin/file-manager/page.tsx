@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useEffect, useState, useContext, useCallback } from "react";
@@ -14,7 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
-import { Copy, Check, Trash2, Loader2, HardDrive, FileVideo, ImageIcon, Upload, Music, File as FileIcon } from "lucide-react";
+import { Copy, Check, Trash2, Loader2, HardDrive, FileVideo, ImageIcon, Upload, Music, File as FileIcon, Edit } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
   AlertDialog,
@@ -31,6 +32,7 @@ import { AdminTitleContext } from "@/contexts/AdminTitleContext";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useDropzone } from "react-dropzone";
 import { uploadFileToNeo } from "@/lib/neo-storage";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 
 interface UploadedFile {
   key: string;
@@ -49,12 +51,19 @@ interface UploadProgress {
   error?: string;
 }
 
+interface RenameState {
+    file: UploadedFile | null;
+    newName: string;
+}
+
 
 export default function FileManagerPage() {
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [storageUsage, setStorageUsage] = useState<StorageUsage | null>(null);
   const [loading, setLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
+  const [isRenaming, setIsRenaming] = useState(false);
+  const [renameState, setRenameState] = useState<RenameState>({ file: null, newName: "" });
   const [searchTerm, setSearchTerm] = useState("");
   const [copiedUrl, setCopiedUrl] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('all');
@@ -194,6 +203,51 @@ export default function FileManagerPage() {
     }
   };
 
+  const openRenameDialog = (file: UploadedFile) => {
+    const fileNameWithoutExt = file.key.replace('uploads/', '').split('.').slice(0, -1).join('.');
+    setRenameState({ file, newName: fileNameWithoutExt });
+  };
+  
+  const handleRename = async () => {
+      if (!renameState.file) return;
+
+      setIsRenaming(true);
+      try {
+          const response = await fetch('/api/rename-file', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                  oldKey: renameState.file.key,
+                  newName: renameState.newName
+              }),
+          });
+          
+          if (!response.ok) {
+              const errorData = await response.json();
+              throw new Error(errorData.error || 'Gagal mengganti nama file.');
+          }
+
+          toast({
+            title: 'File Diganti Nama',
+            description: 'Nama file berhasil diubah.',
+          });
+          
+          setRenameState({ file: null, newName: '' });
+          refreshData();
+
+      } catch (error: any) {
+          console.error("Gagal mengganti nama file:", error);
+          toast({
+              title: 'Gagal Mengganti Nama',
+              description: error.message,
+              variant: 'destructive',
+          });
+      } finally {
+          setIsRenaming(false);
+      }
+  }
+
+
   const filteredFiles = files.filter((file) => {
     const matchesSearch = file.key.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesTab = activeTab === 'all' || file.type === activeTab;
@@ -256,6 +310,33 @@ export default function FileManagerPage() {
   }
 
   return (
+    <>
+    <Dialog open={!!renameState.file} onOpenChange={(isOpen) => !isOpen && setRenameState({ file: null, newName: "" })}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Ganti Nama File</DialogTitle>
+        </DialogHeader>
+        <div className="py-4 space-y-2">
+            <Label htmlFor="new-name">Nama File Baru (tanpa ekstensi)</Label>
+            <Input 
+                id="new-name"
+                value={renameState.newName}
+                onChange={(e) => setRenameState(prev => ({...prev, newName: e.target.value}))}
+                placeholder="nama-file-seo-friendly"
+                disabled={isRenaming}
+            />
+            {renameState.file?.key && <p className="text-xs text-muted-foreground">Ekstensi file `.{renameState.file.key.split('.').pop()}` akan dipertahankan.</p>}
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setRenameState({ file: null, newName: "" })} disabled={isRenaming}>Batal</Button>
+          <Button onClick={handleRename} disabled={isRenaming}>
+            {isRenaming && <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}
+            Simpan Nama Baru
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div {...getRootProps()} className={`w-full p-6 border-2 border-dashed rounded-lg cursor-pointer text-center bg-muted/50 hover:bg-muted transition-colors ${isDragActive ? 'border-primary' : ''}`}>
         <input {...getInputProps()} />
@@ -351,24 +432,17 @@ export default function FileManagerPage() {
                           <div className="mt-2 text-xs truncate text-muted-foreground">{file.key.replace('uploads/', '')}</div>
                           
                           <div className="absolute top-2 right-2 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Button
-                              size="icon"
-                              variant="secondary"
-                              className="h-8 w-8"
-                              onClick={() => handleCopy(file.url)}
-                              disabled={!!isDeleting}
-                            >
+                            <Button size="icon" variant="secondary" className="h-8 w-8" onClick={() => handleCopy(file.url)} disabled={!!isDeleting}>
                               {copiedUrl === file.url ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                               <span className="sr-only">Salin URL</span>
                             </Button>
+                            <Button size="icon" variant="secondary" className="h-8 w-8" onClick={() => openRenameDialog(file)} disabled={!!isDeleting}>
+                              <Edit className="h-4 w-4" />
+                              <span className="sr-only">Ganti Nama</span>
+                            </Button>
                             <AlertDialog>
                               <AlertDialogTrigger asChild>
-                                 <Button
-                                  size="icon"
-                                  variant="destructive"
-                                  className="h-8 w-8"
-                                  disabled={!!isDeleting}
-                                >
+                                 <Button size="icon" variant="destructive" className="h-8 w-8" disabled={!!isDeleting}>
                                   {isDeleting === file.key ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
                                   <span className="sr-only">Hapus File</span>
                                 </Button>
@@ -405,5 +479,6 @@ export default function FileManagerPage() {
         </CardContent>
       </Card>
     </main>
+    </>
   );
 }
