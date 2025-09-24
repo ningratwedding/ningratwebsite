@@ -342,7 +342,7 @@ export default function FileManagerPage() {
                       ))}
                     </div>
                   ) : (
-                    <div className="columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-6 space-y-6">
+                    <div className="columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-4 space-y-4">
                       {filteredFiles.map((file) => (
                         <div key={file.key} className="break-inside-avoid group relative">
                           <div className="w-full overflow-hidden rounded-lg bg-muted shadow-md flex items-center justify-center">
