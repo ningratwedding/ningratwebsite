@@ -39,7 +39,26 @@ export async function POST(request: Request) {
         }
 
         const sanitizedNewName = generateSlug(newName);
-        const newKey = `uploads/${sanitizedNewName}.${fileExtension}`;
+        let newKey = `uploads/${sanitizedNewName}.${fileExtension}`;
+        let counter = 2;
+
+        if (oldKey !== newKey) {
+            while (true) {
+                try {
+                    await s3.headObject({ Bucket: bucket, Key: newKey }).promise();
+                    // File exists, so we append a counter and try again
+                    newKey = `uploads/${sanitizedNewName}-${counter}.${fileExtension}`;
+                    counter++;
+                } catch (error: any) {
+                    if (error.code === 'NotFound') {
+                        // File does not exist, this is a unique name
+                        break;
+                    }
+                    // Another error occurred, re-throw it
+                    throw error;
+                }
+            }
+        }
         
         if (oldKey === newKey) {
              return NextResponse.json({ message: 'New name is the same as the old name. No changes made.' });
