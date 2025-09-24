@@ -133,14 +133,14 @@ export default function FileManagerDialog({
               alt={file.key}
               width={200}
               height={200}
-              className="h-full w-full object-cover transition-transform group-hover:scale-105"
+              className="h-auto w-full object-contain transition-transform group-hover:scale-105"
             />
        )
     }
     
     if (file.type === 'video') {
        return (
-         <div className="w-full h-full bg-black flex items-center justify-center">
+         <div className="w-full h-full bg-black flex items-center justify-center aspect-square">
             <FileVideo className="h-10 w-10 text-muted-foreground" />
          </div>
        )
@@ -148,7 +148,7 @@ export default function FileManagerDialog({
 
     if (file.type === 'audio') {
         return (
-          <div className="w-full h-full bg-muted-foreground/20 flex items-center justify-center">
+          <div className="w-full h-full bg-muted-foreground/20 flex items-center justify-center aspect-square">
              <Music className="h-10 w-10 text-muted-foreground" />
           </div>
         )
@@ -156,7 +156,7 @@ export default function FileManagerDialog({
     
     if (file.type === 'document') {
         return (
-          <div className="w-full h-full bg-blue-100 flex items-center justify-center">
+          <div className="w-full h-full bg-blue-100 flex items-center justify-center aspect-square">
              <FileIcon className="h-10 w-10 text-blue-500" />
           </div>
         )
@@ -164,7 +164,7 @@ export default function FileManagerDialog({
 
 
     return (
-      <div className="w-full h-full bg-muted flex items-center justify-center">
+      <div className="w-full h-full bg-muted flex items-center justify-center aspect-square">
         <ImageIcon className="h-10 w-10 text-muted-foreground" />
       </div>
     );
@@ -233,14 +233,14 @@ export default function FileManagerDialog({
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+             <div className="columns-2 sm:columns-3 md:columns-4 lg:columns-5 gap-4 space-y-4">
               {filteredFiles.map((file) => (
                 <div
                   key={file.key}
-                  className="group relative cursor-pointer"
+                  className="group relative cursor-pointer break-inside-avoid"
                   onClick={() => handleSelectFile(file)}
                 >
-                  <div className="aspect-square w-full overflow-hidden rounded-lg bg-muted shadow-md">
+                  <div className="w-full overflow-hidden rounded-lg bg-muted shadow-md flex items-center justify-center">
                      {renderFilePreview(file)}
                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                         <Button size="sm">Pilih</Button>
