@@ -25,13 +25,6 @@ export default function Footer() {
     fetchSettings();
   }, []);
 
-  const scrollToTop = () => {
-    if (typeof window !== 'undefined') {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  };
-
-
   return (
     <footer className="bg-[#F8F5F1] py-8 text-sm text-gray-600">
       <div className="container mx-auto px-4">
@@ -59,11 +52,6 @@ export default function Footer() {
 
         <div className="mt-8 pt-8 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between">
             <p className="order-2 sm:order-1 mt-4 sm:mt-0 text-xs">&copy; {new Date().getFullYear()} {appName}. Semua Hak Cipta Dilindungi.</p>
-            <div className="order-1 sm:order-2 flex items-center gap-4">
-                 <button onClick={scrollToTop} className="text-xs uppercase tracking-wider hover:text-gray-900">
-                    Kembali ke Atas
-                </button>
-            </div>
         </div>
       </div>
     </footer>
