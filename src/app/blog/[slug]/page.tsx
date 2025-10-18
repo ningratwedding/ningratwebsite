@@ -5,7 +5,6 @@ import {
   where,
   getDocs,
   limit,
-  Timestamp,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { notFound } from 'next/navigation';
@@ -26,7 +25,7 @@ interface BlogPost {
   excerpt?: string;
   contentBlocks?: ContentBlock[];
   heroImageUrl?: string;
-  createdAt: Timestamp;
+  createdAt: any;
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
@@ -96,7 +95,13 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
   }
 
   const postDoc = querySnapshot.docs[0];
-  const post = { id: postDoc.id, ...postDoc.data() } as BlogPost;
+  const data = postDoc.data();
+  const post = { 
+      id: postDoc.id, 
+      ...data,
+      createdAt: data.createdAt?.toDate().toISOString(),
+      updatedAt: data.updatedAt?.toDate().toISOString(),
+  } as BlogPost;
   
-  return <BlogPostClient post={post} />;
+  return <BlogPostClient post={JSON.parse(JSON.stringify(post))} />;
 }

@@ -3,7 +3,6 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { Timestamp } from 'firebase/firestore';
 import { Separator } from '@/components/ui/separator';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
@@ -24,7 +23,7 @@ interface BlogPost {
   excerpt?: string;
   contentBlocks?: ContentBlock[];
   heroImageUrl?: string;
-  createdAt: Timestamp;
+  createdAt: string; // Changed from Timestamp
 }
 
 const getYoutubeEmbedUrl = (url: string) => {
@@ -213,8 +212,8 @@ export default function BlogPostClient({ post }: { post: BlogPost }) {
                 </div>
                 <div className="flex items-center gap-1.5">
                     <CalendarDays className="h-4 w-4" />
-                    <time dateTime={post.createdAt.toDate().toISOString()}>
-                        {format(post.createdAt.toDate(), 'd MMMM, yyyy', { locale: id })}
+                    <time dateTime={new Date(post.createdAt).toISOString()}>
+                        {format(new Date(post.createdAt), 'd MMMM, yyyy', { locale: id })}
                     </time>
                 </div>
             </div>

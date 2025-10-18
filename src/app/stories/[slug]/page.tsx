@@ -98,7 +98,13 @@ export default async function StoryDetailPage({ params }: { params: { slug: stri
   }
 
   const storyDoc = querySnapshot.docs[0];
-  const storyData = { id: storyDoc.id, ...storyDoc.data() } as Story;
+  const data = storyDoc.data();
+  const storyData = { 
+    id: storyDoc.id, 
+    ...data,
+    createdAt: data.createdAt?.toDate().toISOString(),
+    updatedAt: data.updatedAt?.toDate().toISOString(),
+  } as Story;
   
   const relatedQuery = query(
     storiesCollection,
@@ -126,5 +132,5 @@ export default async function StoryDetailPage({ params }: { params: { slug: stri
      };
   });
   
-  return <StoryDetailClient story={storyData} relatedImages={relatedList} />;
+  return <StoryDetailClient story={JSON.parse(JSON.stringify(storyData))} relatedImages={relatedList} />;
 }
