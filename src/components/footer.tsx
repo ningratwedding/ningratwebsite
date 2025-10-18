@@ -40,7 +40,6 @@ export default function Footer() {
             <div>
                 <h4 className="font-semibold text-gray-800 mb-4 uppercase tracking-wider">Navigasi</h4>
                 <nav className="flex flex-col space-y-2">
-                    <Link href="/" className="hover:text-gray-900">Beranda</Link>
                     <Link href="/portfolio" className="hover:text-gray-900">Portofolio</Link>
                     <Link href="/about" className="hover:text-gray-900">Tentang</Link>
                     <Link href="/contact" className="hover:text-gray-900">Hubungi kami</Link>

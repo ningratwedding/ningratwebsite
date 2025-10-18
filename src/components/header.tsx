@@ -12,7 +12,6 @@ import { getSiteSettings } from '@/lib/actions';
 import Image from 'next/image';
 
 const navLinks = [
-  { href: '/', label: 'Beranda' },
   { href: '/portfolio', label: 'Portofolio' },
   { href: '/blog', label: 'Blog' },
   { href: '/about', label: 'Tentang' },
@@ -86,7 +85,6 @@ export default function Header() {
         <div className="hidden md:flex w-full items-center justify-center">
             <div className="flex items-center gap-10">
                 <nav className="flex items-center space-x-8 text-sm uppercase tracking-widest">
-                    <Link href="/" className="transition-opacity hover:opacity-80">Beranda</Link>
                     <Link href="/portfolio" className="transition-opacity hover:opacity-80">Portofolio</Link>
                     <Link href="/blog" className="transition-opacity hover:opacity-80">Blog</Link>
                 </nav>
