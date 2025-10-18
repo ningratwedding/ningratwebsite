@@ -42,7 +42,6 @@ export default function Footer() {
                 <nav className="flex flex-col space-y-2">
                     <Link href="/" className="hover:text-gray-900">Beranda</Link>
                     <Link href="/portfolio" className="hover:text-gray-900">Portofolio</Link>
-                    <Link href="/services" className="hover:text-gray-900">Layanan</Link>
                     <Link href="/about" className="hover:text-gray-900">Tentang</Link>
                     <Link href="/contact" className="hover:text-gray-900">Hubungi kami</Link>
                 </nav>

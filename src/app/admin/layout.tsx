@@ -220,12 +220,6 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
                       >
                         Halaman Kontak
                       </Link>
-                      <Link
-                        href="/admin/settings/services"
-                        className={cn("flex items-center gap-3 rounded-lg px-3 py-2 transition-all", isLinkActive('/admin/settings/services') ? 'text-white font-semibold bg-slate-800' : 'text-slate-400 hover:text-white')}
-                      >
-                        Halaman Layanan
-                      </Link>
                     </nav>
                   </AccordionContent>
                 </AccordionItem>
@@ -263,7 +257,6 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
               <DropdownMenuItem onClick={() => router.push('/admin/settings/portfolio')}>Halaman Portofolio</DropdownMenuItem>
               <DropdownMenuItem onClick={() => router.push('/admin/settings/about')}>Halaman Tentang</DropdownMenuItem>
               <DropdownMenuItem onClick={() => router.push('/admin/settings/contact')}>Halaman Kontak</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => router.push('/admin/settings/services')}>Halaman Layanan</DropdownMenuItem>
               <DropdownMenuItem>Dukungan</DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleLogout}>Keluar</DropdownMenuItem>

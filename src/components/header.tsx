@@ -14,7 +14,6 @@ import Image from 'next/image';
 const navLinks = [
   { href: '/', label: 'Beranda' },
   { href: '/portfolio', label: 'Portofolio' },
-  { href: '/services', label: 'Layanan' },
   { href: '/blog', label: 'Blog' },
   { href: '/about', label: 'Tentang' },
   { href: '/contact', label: 'Hubungi kami' },
@@ -89,7 +88,7 @@ export default function Header() {
                 <nav className="flex items-center space-x-8 text-sm uppercase tracking-widest">
                     <Link href="/" className="transition-opacity hover:opacity-80">Beranda</Link>
                     <Link href="/portfolio" className="transition-opacity hover:opacity-80">Portofolio</Link>
-                    <Link href="/services" className="transition-opacity hover:opacity-80">Layanan</Link>
+                    <Link href="/blog" className="transition-opacity hover:opacity-80">Blog</Link>
                 </nav>
                 
                 <Link href="/" className="flex-shrink-0">
@@ -97,7 +96,6 @@ export default function Header() {
                 </Link>
 
                 <nav className="flex items-center space-x-8 text-sm uppercase tracking-widest">
-                    <Link href="/blog" className="transition-opacity hover:opacity-80">Blog</Link>
                     <Link href="/about" className="transition-opacity hover:opacity-80">Tentang</Link>
                     <Link href="/contact" className="transition-opacity hover:opacity-80">Hubungi Kami</Link>
                 </nav>
