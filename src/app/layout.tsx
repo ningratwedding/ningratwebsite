@@ -10,11 +10,38 @@ import { headers } from 'next/headers';
 
 export async function generateMetadata() {
   const settings = await getSiteSettings();
- 
+  const siteName = settings?.appName || 'Ningrat Stories';
+  const description = settings?.metaDescription || 'A collection of beautiful stories told through photography.';
+  const ogImage = settings?.logoUrl || '/og-image.png'; // Fallback OG image
+
   return {
-    title: settings?.appName || 'Ningrat Stories',
-    description: settings?.metaDescription || 'A collection of beautiful stories told through photography.',
-    keywords: settings?.metaKeywords || '',
+    title: {
+      default: siteName,
+      template: `%s | ${siteName}`,
+    },
+    description: description,
+    keywords: settings?.metaKeywords || 'wedding, photography, story',
+    openGraph: {
+      title: siteName,
+      description: description,
+      url: './',
+      siteName: siteName,
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+        },
+      ],
+      locale: 'id_ID',
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: siteName,
+      description: description,
+      images: [ogImage],
+    },
     icons: {
       icon: settings?.faviconUrl || '/favicon.ico',
     },

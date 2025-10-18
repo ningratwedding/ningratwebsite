@@ -1,9 +1,6 @@
 
-
-'use client';
-
 import Image from 'next/image';
-import { notFound, useParams } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { ArrowUp, Share2, Link as LinkIcon } from 'lucide-react';
 import PortfolioGrid from '@/components/portfolio-grid';
@@ -42,6 +39,57 @@ interface Story {
   audioFileUrl?: string;
   galleryImageUrls?: string[];
   category?: string;
+}
+
+export async function generateMetadata({ params }: { params: { slug: string } }) {
+  const slug = params.slug;
+  try {
+    const q = query(collection(db, 'stories'), where('slug', '==', slug), limit(1));
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+      return {
+        title: 'Cerita tidak ditemukan',
+      };
+    }
+
+    const storyDoc = querySnapshot.docs[0];
+    const story = storyDoc.data() as Story;
+
+    const title = story.title;
+    const description = story.description || `Kisah oleh ${story.credit}.`;
+    const ogImage = story.heroImageUrl || '/og-image.png';
+
+    return {
+      title,
+      description,
+      openGraph: {
+        title,
+        description,
+        type: 'article',
+        images: [
+          {
+            url: ogImage,
+            width: 1200,
+            height: 630,
+            alt: title,
+          },
+        ],
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title,
+        description,
+        images: [ogImage],
+      },
+    };
+  } catch (error) {
+    console.error("Gagal membuat metadata:", error);
+    return {
+      title: 'Kesalahan Server',
+      description: 'Gagal memuat metadata untuk cerita ini.',
+    };
+  }
 }
 
 const getYoutubeEmbedUrl = (url: string) => {
@@ -213,81 +261,9 @@ const StoryContentRenderer = ({ blocks }: { blocks: ContentBlock[] }) => {
     );
 };
 
-
-export default function StoryDetailPage() {
-  const params = useParams();
-  const slug = params.slug as string;
-  const [story, setStory] = useState<Story | null>(null);
-  const [relatedImages, setRelatedImages] = useState<ImagePlaceholder[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [notFoundError, setNotFoundError] = useState(false);
+function StoryDetailClient({ story, relatedImages }: { story: Story; relatedImages: ImagePlaceholder[] }) {
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
-
-
-  useEffect(() => {
-    if (!slug) {
-      setLoading(false);
-      setNotFoundError(true);
-      return;
-    }
-
-    const fetchStoryAndRelated = async () => {
-      setLoading(true);
-      setNotFoundError(false);
-      
-      try {
-        const storiesCollection = collection(db, 'stories');
-        const q = query(storiesCollection, where('slug', '==', slug), limit(1));
-        const querySnapshot = await getDocs(q);
-
-        if (querySnapshot.empty) {
-          setNotFoundError(true);
-          setLoading(false);
-          return;
-        }
-
-        const storyDoc = querySnapshot.docs[0];
-        const storyData = { id: storyDoc.id, ...storyDoc.data() } as Story;
-        setStory(storyData);
-
-        const relatedQuery = query(
-          storiesCollection,
-          where('category', '==', storyData.category || 'Weddings'),
-          where('__name__', '!=', storyData.id),
-          limit(3)
-        );
-        const relatedSnapshot = await getDocs(relatedQuery);
-        const relatedList = relatedSnapshot.docs.map((doc) => {
-           const data = doc.data();
-           let description = data.description || 'Lihat cerita';
-           if (description.length > 70) {
-              description = description.substring(0, 70) + '...';
-           }
-           return {
-             id: doc.id,
-             slug: data.slug,
-             title: data.title,
-             description: description,
-             category: data.category || 'Pernikahan',
-             imageUrl: data.heroImageUrl || 'https://picsum.photos/seed/placeholder/800/600',
-             width: 800,
-             height: 600,
-             imageHint: 'foto cerita',
-           };
-        });
-        setRelatedImages(relatedList);
-
-      } catch (error) {
-        console.error('Gagal mengambil cerita:', error);
-        setStory(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchStoryAndRelated();
-  }, [slug]);
 
   const handlePlay = () => setIsAudioPlaying(true);
   const handlePause = () => setIsAudioPlaying(false);
@@ -306,29 +282,8 @@ export default function StoryDetailPage() {
       };
     }
   }, [story]);
-
-  if (loading) {
-    return (
-      <div>
-        <Skeleton className="w-full aspect-[4/5] md:aspect-video" />
-        <div className="container mx-auto px-4 py-12 md:py-20">
-          <div className="max-w-2xl mx-auto space-y-8">
-            <Skeleton className="h-12 w-3/4 mx-auto" />
-            <Skeleton className="h-6 w-full" />
-            <Skeleton className="h-6 w-full" />
-            <Skeleton className="h-6 w-4/5" />
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (notFoundError || !story) {
-    return notFound();
-  }
   
   const isNewStory = story.contentBlocks && story.contentBlocks.length > 0;
-  
   const description = story.description || '';
 
   return (
@@ -466,6 +421,49 @@ export default function StoryDetailPage() {
   );
 }
 
+export default async function StoryDetailPage({ params }: { params: { slug: string } }) {
+  const { slug } = params;
 
+  if (!slug) {
+    return notFound();
+  }
 
-    
+  const storiesCollection = collection(db, 'stories');
+  const q = query(storiesCollection, where('slug', '==', slug), limit(1));
+  const querySnapshot = await getDocs(q);
+
+  if (querySnapshot.empty) {
+    return notFound();
+  }
+
+  const storyDoc = querySnapshot.docs[0];
+  const storyData = { id: storyDoc.id, ...storyDoc.data() } as Story;
+  
+  const relatedQuery = query(
+    storiesCollection,
+    where('category', '==', storyData.category || 'Weddings'),
+    where('__name__', '!=', storyData.id),
+    limit(3)
+  );
+  const relatedSnapshot = await getDocs(relatedQuery);
+  const relatedList: ImagePlaceholder[] = relatedSnapshot.docs.map((doc) => {
+     const data = doc.data();
+     let description = data.description || 'Lihat cerita';
+     if (description.length > 70) {
+        description = description.substring(0, 70) + '...';
+     }
+     return {
+       id: doc.id,
+       slug: data.slug,
+       title: data.title,
+       description: description,
+       category: data.category || 'Pernikahan',
+       imageUrl: data.heroImageUrl || 'https://picsum.photos/seed/placeholder/800/600',
+       width: 800,
+       height: 600,
+       imageHint: 'foto cerita',
+     };
+  });
+  
+  return <StoryDetailClient story={storyData} relatedImages={relatedList} />;
+}

@@ -1,10 +1,7 @@
 
-'use client';
-
 import Image from 'next/image';
 import Link from 'next/link';
-import { notFound, useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { notFound } from 'next/navigation';
 import {
   collection,
   query,
@@ -14,8 +11,6 @@ import {
   Timestamp,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import { Skeleton } from '@/components/ui/skeleton';
-import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
@@ -37,6 +32,57 @@ interface BlogPost {
   contentBlocks?: ContentBlock[];
   heroImageUrl?: string;
   createdAt: Timestamp;
+}
+
+export async function generateMetadata({ params }: { params: { slug: string } }) {
+  const slug = params.slug;
+  try {
+    const q = query(collection(db, 'blogPosts'), where('slug', '==', slug), limit(1));
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+      return {
+        title: 'Postingan tidak ditemukan',
+      };
+    }
+
+    const postDoc = querySnapshot.docs[0];
+    const post = postDoc.data() as BlogPost;
+
+    const title = post.title;
+    const description = post.excerpt || `Sebuah postingan blog oleh ${post.author}.`;
+    const ogImage = post.heroImageUrl || '/og-image.png';
+
+    return {
+      title,
+      description,
+      openGraph: {
+        title,
+        description,
+        type: 'article',
+        images: [
+          {
+            url: ogImage,
+            width: 1200,
+            height: 630,
+            alt: title,
+          },
+        ],
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title,
+        description,
+        images: [ogImage],
+      },
+    };
+  } catch (error) {
+     console.error("Gagal membuat metadata blog:", error);
+     return {
+        title: 'Kesalahan Server',
+        description: 'Gagal memuat metadata untuk postingan ini.',
+     }
+  }
 }
 
 
@@ -199,72 +245,23 @@ const BlogContentRenderer = ({ blocks }: { blocks: ContentBlock[] }) => {
 };
 
 
-export default function BlogPostPage() {
-  const params = useParams();
-  const slug = params.slug as string;
-  const [post, setPost] = useState<BlogPost | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [notFoundError, setNotFoundError] = useState(false);
+export default async function BlogPostPage({ params }: { params: { slug: string }}) {
+  const { slug } = params;
 
-  useEffect(() => {
-    if (!slug) {
-      setLoading(false);
-      setNotFoundError(true);
-      return;
-    }
-
-    const fetchPost = async () => {
-      setLoading(true);
-      setNotFoundError(false);
-      
-      try {
-        const postsCollection = collection(db, 'blogPosts');
-        const q = query(postsCollection, where('slug', '==', slug), limit(1));
-        const querySnapshot = await getDocs(q);
-
-        if (querySnapshot.empty) {
-          setNotFoundError(true);
-          setLoading(false);
-          return;
-        }
-
-        const postDoc = querySnapshot.docs[0];
-        const postData = { id: postDoc.id, ...postDoc.data() } as BlogPost;
-        setPost(postData);
-
-      } catch (error) {
-        console.error('Gagal mengambil postingan blog:', error);
-        setPost(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPost();
-  }, [slug]);
-
-  if (loading) {
-    return (
-      <div className="bg-[#F8F5F1]">
-        <Skeleton className="w-full aspect-[16/9] md:aspect-video" />
-        <div className="container mx-auto px-4 py-12 md:py-20">
-          <div className="max-w-2xl mx-auto space-y-8">
-            <Skeleton className="h-12 w-3/4" />
-            <Skeleton className="h-6 w-1/2" />
-            <div className="space-y-4 pt-8">
-                <Skeleton className="h-6 w-full" />
-                <Skeleton className="h-6 w-full" />
-                <Skeleton className="h-6 w-4/5" />
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (notFoundError || !post) {
+  if (!slug) {
     return notFound();
   }
+
+  const postsCollection = collection(db, 'blogPosts');
+  const q = query(postsCollection, where('slug', '==', slug), limit(1));
+  const querySnapshot = await getDocs(q);
+
+  if (querySnapshot.empty) {
+    return notFound();
+  }
+
+  const postDoc = querySnapshot.docs[0];
+  const post = { id: postDoc.id, ...postDoc.data() } as BlogPost;
   
   return (
     <div className="animate-in fade-in duration-1000 bg-[#F8F5F1]">
