@@ -8,13 +8,16 @@ import Footer from '@/components/footer';
 import { getSiteSettings } from '@/lib/actions';
 import { headers } from 'next/headers';
 
+const BASE_URL = 'https://www.ningratwedding.id';
+
 export async function generateMetadata() {
   const settings = await getSiteSettings();
   const siteName = settings?.appName || 'Ningrat Stories';
   const description = settings?.metaDescription || 'A collection of beautiful stories told through photography.';
-  const ogImage = settings?.logoUrl || '/og-image.png'; // Fallback OG image
+  const ogImage = settings?.logoUrl || `${BASE_URL}/og-image.png`; // Fallback OG image
 
   return {
+    metadataBase: new URL(BASE_URL),
     title: {
       default: siteName,
       template: `%s | ${siteName}`,
@@ -24,7 +27,7 @@ export async function generateMetadata() {
     openGraph: {
       title: siteName,
       description: description,
-      url: './',
+      url: '/',
       siteName: siteName,
       images: [
         {
