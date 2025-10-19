@@ -57,7 +57,7 @@ export default function ContactPage() {
     fetchSettings();
   }, []);
 
-  const whatsappMessage = "Halo Ningrat Wedding, saya tertarik dengan layanan Anda dan ingin mendapatkan penawaran khusus. Bisakah Anda memberikan informasi lebih lanjut?";
+  const whatsappMessage = "Salam Ningrat Wedding, setiap kisah cinta adalah mahakarya. Saya terpikat dengan cara Anda merangkai cerita dan ingin mengetahui bagaimana Anda dapat mengabadikan momen kami. Mohon informasinya lebih lanjut.";
   const whatsappUrl = `https://wa.me/6282340211624?text=${encodeURIComponent(whatsappMessage)}`;
 
   if (loading) {
