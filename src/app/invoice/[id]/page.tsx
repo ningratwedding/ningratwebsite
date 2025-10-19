@@ -326,21 +326,19 @@ export default function InvoicePage() {
                  <footer className="mt-12 p-6 sm:p-10 border-t text-xs text-muted-foreground">
                     <div className="grid sm:grid-cols-2 gap-4">
                         <div className="text-left">
-                            {servicesSettings?.tagline && <p className="font-semibold italic mb-2">{servicesSettings.tagline}</p>}
                             <p className="font-semibold">Ningrat Wedding</p>
-                            <p>KB.18, Jl. Klingkung No.18, RT.06/RW.026, Mangunjaya, Kec. Tambun Sel., Bekasi Timur, Jawa Barat 17510</p>
+                            {servicesSettings?.tagline && <p className="italic">{servicesSettings.tagline}</p>}
                         </div>
                          <div className="sm:text-right space-y-1">
-                           {invoice.myContactInfo?.split('\\n').map((line, index) => {
+                           {invoice.myContactInfo?.split('\n').map((line, index) => {
                                 const lowerLine = line.toLowerCase();
-                                if (lowerLine.includes('ningratwedding.id')) {
-                                    return <div key={index} className="flex items-center justify-end gap-2">{line}<Globe className="h-3 w-3" /></div>;
-                                } else if (lowerLine.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$/)) {
+                                if (lowerLine.includes('@')) {
                                     return <div key={index} className="flex items-center justify-end gap-2">{line}<Mail className="h-3 w-3" /></div>;
-                                } else if (lowerLine.match(/\\d{6,}/)) { // Simple check for a phone number
+                                } else if (lowerLine.includes('http') || lowerLine.includes('www') || lowerLine.includes('.id') || lowerLine.includes('.com')) {
+                                    return <div key={index} className="flex items-center justify-end gap-2">{line}<Globe className="h-3 w-3" /></div>;
+                                } else if (lowerLine.match(/\d{6,}/)) { // Simple check for a phone number
                                     return <div key={index} className="flex items-center justify-end gap-2">{line}<Phone className="h-3 w-3" /></div>;
                                 }
-                                // Return the line without an icon if no match
                                 return <div key={index}>{line}</div>;
                            })}
                          </div>
