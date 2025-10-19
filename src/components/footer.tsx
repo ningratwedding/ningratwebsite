@@ -8,7 +8,7 @@ import { useState, useEffect } from 'react';
 
 const socialLinks = [
     { Icon: Instagram, href: "https://www.instagram.com/ningrat_wedding" },
-    { Icon: Facebook, href: "#" },
+    { Icon: Facebook, href: "https://web.facebook.com/people/Wedding-bekasi/61552709649604/" },
     { Icon: Mail, href: "mailto:ningratwedding@gmail.com" },
 ]
 
