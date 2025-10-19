@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { getContactSettings } from '@/lib/actions';
 import Link from "next/link";
 import { Skeleton } from '@/components/ui/skeleton';
-import { Download } from 'lucide-react';
+import { Download, CalendarCheck, MessageCircle } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogContent,
@@ -110,7 +110,22 @@ export default function ContactPage() {
               </p>
           </div>
         </div>
-          <div className="flex flex-col md:flex-row items-center justify-center gap-4 mt-8">
+          <div className="flex flex-col items-center justify-center gap-4 mt-8">
+              <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                <Button asChild variant="outline" className="w-full bg-white">
+                  <Link href="/contact">
+                    <CalendarCheck className="mr-2 h-4 w-4" />
+                    Cek Ketersediaan
+                  </Link>
+                </Button>
+                <Button asChild className="w-full bg-accent text-accent-foreground hover:bg-accent/90">
+                  <Link href="/contact">
+                    <MessageCircle className="mr-2 h-4 w-4" />
+                    Konsultasi Gratis
+                  </Link>
+                </Button>
+              </div>
+
               {settings.downloadableFileUrl && (
                   <AlertDialog open={isFormOpen} onOpenChange={setIsFormOpen}>
                     <AlertDialogTrigger asChild>

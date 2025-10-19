@@ -4,7 +4,6 @@ import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
-import StickyCTA from '@/components/StickyCTA'; // Import the new component
 import { getSiteSettings } from '@/lib/actions';
 import { headers } from 'next/headers';
 
@@ -74,12 +73,11 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet" />
       </head>
       <body className={cn("font-body antialiased h-full flex flex-col", (isAdminPage || isLoginPage || isInvoicePage) ? "bg-muted/40" : (isDarkPage ? "bg-background" : "bg-[#F8F5F1]"))}>
-        <div id="root-layout-content" className="flex flex-col flex-grow pb-24 sm:pb-20"> {/* Add padding-bottom to avoid content overlap */}
+        <div id="root-layout-content" className="flex flex-col flex-grow">
           {showHeaderFooter && <Header />}
           <main className={cn("flex-grow", !showHeaderFooter && "h-full")}>{children}</main>
           {showHeaderFooter && <Footer />}
         </div>
-        {showHeaderFooter && <StickyCTA />} {/* Add the Sticky CTA */}
         <Toaster />
       </body>
     </html>
