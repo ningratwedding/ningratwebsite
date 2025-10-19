@@ -131,7 +131,7 @@ export default function ContactPage() {
                     <AlertDialogTrigger asChild>
                        <Button variant="default" className="w-full md:w-auto rounded-sm uppercase tracking-widest font-normal px-8 py-6">
                          <Download className="mr-2 h-4 w-4" />
-                         Unduh Katalog
+                         Price List
                       </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
