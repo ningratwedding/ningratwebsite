@@ -323,14 +323,24 @@ export default function InvoicePage() {
                     )}
                 </div>
                 
-                <footer className="mt-12 p-6 sm:p-10 border-t text-xs text-muted-foreground">
+                 <footer className="mt-12 p-6 sm:p-10 border-t text-xs text-muted-foreground">
                     <div className="grid sm:grid-cols-2 gap-4">
-                        <div className="text-left">
+                        <div className="sm:text-left">
                             {servicesSettings?.tagline && <p className="font-semibold italic mb-2">{servicesSettings.tagline}</p>}
                             <p>Terima kasih telah berbisnis dengan kami!</p>
                         </div>
-                         <div className="sm:text-right space-y-1 whitespace-pre-line">
-                           {invoice.myContactInfo}
+                         <div className="sm:text-right space-y-1">
+                           {invoice.myContactInfo?.split('\n').map((line, index) => {
+                                const lowerLine = line.toLowerCase();
+                                if (lowerLine.includes('www.') || lowerLine.includes('.com') && !lowerLine.includes('@')) {
+                                    return <div key={index} className="flex items-center justify-end gap-2"><Globe className="h-3 w-3" /> {line}</div>;
+                                } else if (lowerLine.includes('@')) {
+                                    return <div key={index} className="flex items-center justify-end gap-2"><Mail className="h-3 w-3" /> {line}</div>;
+                                } else if (lowerLine.match(/\d/)) {
+                                    return <div key={index} className="flex items-center justify-end gap-2"><Phone className="h-3 w-3" /> {line}</div>;
+                                }
+                                return <div key={index}>{line}</div>;
+                           })}
                          </div>
                     </div>
                 </footer>
@@ -339,5 +349,3 @@ export default function InvoicePage() {
     </div>
   );
 }
-
-    
