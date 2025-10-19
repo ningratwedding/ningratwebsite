@@ -17,7 +17,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription }
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Loader2, Download, Printer, Share2 } from 'lucide-react';
+import { Loader2, Download, Printer, Share2, Globe, Mail, Phone } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { getSiteSettings, getServicesSettings } from '@/lib/actions';
@@ -329,7 +329,20 @@ export default function InvoicePage() {
                             {servicesSettings?.tagline && <p className="font-semibold italic mb-2">{servicesSettings.tagline}</p>}
                             <p>Terima kasih telah berbisnis dengan kami!</p>
                         </div>
-                        {invoice.myContactInfo && <p className="sm:text-right whitespace-pre-line">{invoice.myContactInfo}</p>}
+                        <div className="sm:text-right space-y-1">
+                            <div className="flex items-center justify-end gap-2">
+                                <p>ningratwedding.id</p>
+                                <Globe className="h-3 w-3" />
+                            </div>
+                            <div className="flex items-center justify-end gap-2">
+                                <p>contact@ningrat.com</p>
+                                <Mail className="h-3 w-3" />
+                            </div>
+                            <div className="flex items-center justify-end gap-2">
+                                <p>0812-3456-7890</p>
+                                <Phone className="h-3 w-3" />
+                            </div>
+                        </div>
                     </div>
                 </footer>
             </div>
