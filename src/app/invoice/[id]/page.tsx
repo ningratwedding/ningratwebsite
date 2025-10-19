@@ -10,7 +10,7 @@ import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
-import Image from 'next/image'; // Import next/image
+import Image from 'next/image';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from '@/components/ui/card';
@@ -22,9 +22,6 @@ import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { getSiteSettings, getServicesSettings } from '@/lib/actions';
 import { cn } from '@/lib/utils';
-
-// Import the local logo
-import invoiceLogo from '/public/logo-ningrat-faktur.png';
 
 interface InvoiceSubItem {
   description: string;
@@ -120,7 +117,6 @@ export default function InvoicePage() {
     try {
       const canvas = await html2canvas(invoiceRef.current, { 
         scale: 2,
-        // No longer need useCORS as image is local
       });
       const imgData = canvas.toDataURL('image/png');
       
@@ -231,7 +227,7 @@ export default function InvoicePage() {
             <div ref={invoiceRef} className="bg-background p-0 rounded-lg shadow-sm print:shadow-none overflow-hidden">
                  <header className="flex flex-col sm:flex-row justify-between items-start gap-8 mb-10 bg-black text-white p-6 sm:p-10">
                     <div className="flex items-center gap-4">
-                         <Image src={invoiceLogo} alt="logo" className="h-12 w-auto filter invert" width={150} height={50}/>
+                         <Image src="/logo-faktur.svg" alt="logo" className="h-12 w-auto filter invert" width={150} height={50}/>
                         <div>
                             <h1 className="text-2xl font-bold">{siteSettings?.appName || 'Perusahaan Anda'}</h1>
                             <p className="text-muted-foreground text-sm text-gray-300">Invoice</p>
