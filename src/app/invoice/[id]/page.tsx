@@ -331,13 +331,13 @@ export default function InvoicePage() {
                             <p>KB.18, Jl. Klingkung No.18, RT.06/RW.026, Mangunjaya, Kec. Tambun Sel., Bekasi Timur, Jawa Barat 17510</p>
                         </div>
                          <div className="sm:text-right space-y-1">
-                           {invoice.myContactInfo?.split('\n').map((line, index) => {
+                           {invoice.myContactInfo?.split('\\n').map((line, index) => {
                                 const lowerLine = line.toLowerCase();
                                 if (lowerLine.includes('ningratwedding.id')) {
                                     return <div key={index} className="flex items-center justify-end gap-2">{line} <Globe className="h-3 w-3" /></div>;
                                 } else if (lowerLine.includes('@')) {
                                     return <div key={index} className="flex items-center justify-end gap-2">{line} <Mail className="h-3 w-3" /></div>;
-                                } else if (lowerLine.match(/\d/)) {
+                                } else if (lowerLine.match(/\\d/)) {
                                     return <div key={index} className="flex items-center justify-end gap-2">{line} <Phone className="h-3 w-3" /></div>;
                                 }
                                 return null;
