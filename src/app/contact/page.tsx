@@ -57,6 +57,9 @@ export default function ContactPage() {
     fetchSettings();
   }, []);
 
+  const whatsappMessage = "Halo Ningrat Wedding, saya tertarik dengan layanan Anda dan ingin mendapatkan penawaran khusus. Bisakah Anda memberikan informasi lebih lanjut?";
+  const whatsappUrl = `https://wa.me/6282340211624?text=${encodeURIComponent(whatsappMessage)}`;
+
   if (loading) {
       return (
           <>
@@ -140,7 +143,7 @@ export default function ContactPage() {
                   </AlertDialog>
               )}
                <Button asChild variant="outline" className="w-full md:w-auto bg-accent text-accent-foreground hover:bg-accent/90 border-accent hover:border-accent/90 rounded-sm uppercase tracking-widest font-normal px-8 py-6">
-                  <Link href="https://wa.me/6282340211624" target="_blank">
+                  <Link href={whatsappUrl} target="_blank">
                       WHATSAPP | PENAWARAN KHUSUS
                   </Link>
               </Button>
