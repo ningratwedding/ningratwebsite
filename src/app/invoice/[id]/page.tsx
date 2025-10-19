@@ -230,7 +230,7 @@ export default function InvoicePage() {
                          <Image src="/logo-faktur.svg" alt="logo" className="h-12 w-auto" width={150} height={50}/>
                         <div>
                             <h1 className="text-2xl font-bold">{siteSettings?.appName || 'Perusahaan Anda'}</h1>
-                            <p className="text-muted-foreground text-sm text-gray-300">Invoice</p>
+                            <p className="text-muted-foreground text-sm text-gray-300">ningratwedding.id</p>
                         </div>
                     </div>
                      <div className="text-left sm:text-right">
@@ -325,9 +325,9 @@ export default function InvoicePage() {
                 
                  <footer className="mt-12 p-6 sm:p-10 border-t text-xs text-muted-foreground">
                     <div className="grid sm:grid-cols-2 gap-4">
-                        <div className="text-left">
-                            <p className="font-semibold">Ningrat Wedding</p>
-                            {servicesSettings?.tagline && <p className="italic">{servicesSettings.tagline}</p>}
+                        <div>
+                            <p className="font-semibold">{siteSettings?.appName || 'Ningrat Wedding'}</p>
+                             {servicesSettings?.tagline && <p className="italic">{servicesSettings.tagline}</p>}
                         </div>
                          <div className="sm:text-right space-y-1">
                            {invoice.myContactInfo?.split('\n').map((line, index) => {
