@@ -323,7 +323,7 @@ export default function InvoicePage() {
                     )}
                 </div>
                 
-                <footer className="mt-12 p-6 sm:p-10 border-t text-center text-xs text-muted-foreground">
+                <footer className="mt-12 p-6 sm:p-10 border-t text-left text-xs text-muted-foreground">
                     {invoice.myContactInfo && <p className="mb-2 whitespace-pre-line">{invoice.myContactInfo}</p>}
                     {servicesSettings?.tagline && <p className="font-semibold italic mb-2">{servicesSettings.tagline}</p>}
                     <p>Terima kasih telah berbisnis dengan kami!</p>
