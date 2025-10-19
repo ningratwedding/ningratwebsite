@@ -333,11 +333,11 @@ export default function InvoicePage() {
                            {invoice.myContactInfo?.split('\n').map((line, index) => {
                                 const lowerLine = line.toLowerCase();
                                 if (lowerLine.includes('@')) {
-                                    return <div key={index} className="flex items-center justify-end gap-2">{line}<Mail className="h-3 w-3" /></div>;
+                                    return <div key={index} className="flex items-center justify-end gap-2">{line.replace(/email:/i, '').trim()}<Mail className="h-3 w-3" /></div>;
                                 } else if (lowerLine.includes('http') || lowerLine.includes('www') || lowerLine.includes('.id') || lowerLine.includes('.com')) {
                                     return <div key={index} className="flex items-center justify-end gap-2">{line}<Globe className="h-3 w-3" /></div>;
-                                } else if (lowerLine.match(/\d{6,}/)) { // Simple check for a phone number
-                                    return <div key={index} className="flex items-center justify-end gap-2">{line}<Phone className="h-3 w-3" /></div>;
+                                } else if (lowerLine.match(/\d{6,}/)) { 
+                                    return <div key={index} className="flex items-center justify-end gap-2">{line.replace(/telepon:/i, '').trim()}<Phone className="h-3 w-3" /></div>;
                                 }
                                 return <div key={index}>{line}</div>;
                            })}
