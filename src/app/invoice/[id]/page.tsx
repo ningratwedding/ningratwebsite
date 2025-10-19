@@ -114,7 +114,14 @@ export default function InvoicePage() {
     setIsProcessing(true);
     toast({ title: "Mempersiapkan PDF...", description: "Ini mungkin memakan waktu beberapa saat." });
     try {
-      const canvas = await html2canvas(invoiceRef.current, { scale: 2 });
+      const canvas = await html2canvas(invoiceRef.current, { 
+        scale: 2,
+        useCORS: true, // Enable CORS to fetch cross-origin images
+        onclone: (document) => {
+          // In case the image is an SVG or requires special handling, we might need to re-fetch and convert it to a data URL.
+          // For now, useCORS should be sufficient for most image types (PNG, JPG) from Firebase Storage.
+        }
+      });
       const imgData = canvas.toDataURL('image/png');
       
       const pdf = new jsPDF({
@@ -222,9 +229,9 @@ export default function InvoicePage() {
             </Card>
 
             <div ref={invoiceRef} className="bg-background p-0 rounded-lg shadow-sm print:shadow-none overflow-hidden">
-                <header className="flex flex-col sm:flex-row justify-between items-start gap-8 mb-10 bg-black text-white p-6 sm:p-10">
+                 <header className="flex flex-col sm:flex-row justify-between items-start gap-8 mb-10 bg-black text-white p-6 sm:p-10">
                     <div className="flex items-center gap-4">
-                        {siteSettings?.logoUrl && <img src={siteSettings.logoUrl} alt="logo" className="h-12 w-auto filter invert brightness-0"/>}
+                         {siteSettings?.logoUrl && <img src={siteSettings.logoUrl} alt="logo" className="h-12 w-auto filter invert brightness-0" crossOrigin="anonymous"/>}
                         <div>
                             <h1 className="text-2xl font-bold">{siteSettings?.appName || 'Perusahaan Anda'}</h1>
                             <p className="text-muted-foreground text-sm text-gray-300">Invoice</p>
