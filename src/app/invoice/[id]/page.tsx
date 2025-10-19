@@ -327,19 +327,20 @@ export default function InvoicePage() {
                     <div className="grid sm:grid-cols-2 gap-4">
                         <div className="text-left">
                             {servicesSettings?.tagline && <p className="font-semibold italic mb-2">{servicesSettings.tagline}</p>}
-                            <p>Terima kasih telah berbisnis dengan kami!</p>
+                            <p className="font-semibold">Ningrat Wedding</p>
+                            <p>KB.18, Jl. Klingkung No.18, RT.06/RW.026, Mangunjaya, Kec. Tambun Sel., Bekasi Timur, Jawa Barat 17510</p>
                         </div>
                          <div className="sm:text-right space-y-1">
                            {invoice.myContactInfo?.split('\n').map((line, index) => {
                                 const lowerLine = line.toLowerCase();
-                                if (lowerLine.includes('www.') || lowerLine.includes('.com') && !lowerLine.includes('@')) {
+                                if (lowerLine.includes('ningratwedding.id')) {
                                     return <div key={index} className="flex items-center justify-end gap-2">{line} <Globe className="h-3 w-3" /></div>;
                                 } else if (lowerLine.includes('@')) {
                                     return <div key={index} className="flex items-center justify-end gap-2">{line} <Mail className="h-3 w-3" /></div>;
                                 } else if (lowerLine.match(/\d/)) {
                                     return <div key={index} className="flex items-center justify-end gap-2">{line} <Phone className="h-3 w-3" /></div>;
                                 }
-                                return <div key={index}>{line}</div>;
+                                return null;
                            })}
                          </div>
                     </div>
@@ -349,5 +350,3 @@ export default function InvoicePage() {
     </div>
   );
 }
-
-    
