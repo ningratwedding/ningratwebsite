@@ -17,7 +17,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription }
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Loader2, Download, Printer, Share2, Globe, Mail, Phone } from 'lucide-react';
+import { Loader2, Download, Printer, Share2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { getSiteSettings, getServicesSettings } from '@/lib/actions';
@@ -330,17 +330,9 @@ export default function InvoicePage() {
                              {servicesSettings?.tagline && <p className="italic">{servicesSettings.tagline}</p>}
                         </div>
                          <div className="sm:text-right space-y-1">
-                           {invoice.myContactInfo?.split('\n').map((line, index) => {
-                                const lowerLine = line.toLowerCase();
-                                if (lowerLine.includes('@')) {
-                                    return <div key={index} className="flex items-center justify-end gap-2">{line.replace(/email:/i, '').trim()}<Mail className="h-3 w-3" /></div>;
-                                } else if (lowerLine.includes('http') || lowerLine.includes('www') || lowerLine.includes('.id') || lowerLine.includes('.com')) {
-                                    return <div key={index} className="flex items-center justify-end gap-2">{line}<Globe className="h-3 w-3" /></div>;
-                                } else if (lowerLine.match(/\d{6,}/)) { 
-                                    return <div key={index} className="flex items-center justify-end gap-2">{line.replace(/telepon:/i, '').trim()}<Phone className="h-3 w-3" /></div>;
-                                }
-                                return <div key={index}>{line}</div>;
-                           })}
+                           {invoice.myContactInfo?.split('\n').map((line, index) => (
+                                <div key={index}>{line}</div>
+                           ))}
                          </div>
                     </div>
                 </footer>
