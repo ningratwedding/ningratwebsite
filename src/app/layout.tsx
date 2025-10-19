@@ -1,10 +1,10 @@
 
-
 import './globals.css';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
+import StickyCTA from '@/components/StickyCTA'; // Import the new component
 import { getSiteSettings } from '@/lib/actions';
 import { headers } from 'next/headers';
 
@@ -14,7 +14,7 @@ export async function generateMetadata() {
   const settings = await getSiteSettings();
   const siteName = settings?.appName || 'Ningrat Stories';
   const description = settings?.metaDescription || 'A collection of beautiful stories told through photography.';
-  const ogImage = settings?.logoUrl || `${BASE_URL}/og-image.png`; // Fallback OG image
+  const ogImage = settings?.logoUrl || `${BASE_URL}/og-image.png`;
 
   return {
     metadataBase: new URL(BASE_URL),
@@ -74,11 +74,12 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet" />
       </head>
       <body className={cn("font-body antialiased h-full flex flex-col", (isAdminPage || isLoginPage || isInvoicePage) ? "bg-muted/40" : (isDarkPage ? "bg-background" : "bg-[#F8F5F1]"))}>
-        <div id="root-layout-content" className="flex flex-col flex-grow">
+        <div id="root-layout-content" className="flex flex-col flex-grow pb-24 sm:pb-20"> {/* Add padding-bottom to avoid content overlap */}
           {showHeaderFooter && <Header />}
           <main className={cn("flex-grow", !showHeaderFooter && "h-full")}>{children}</main>
           {showHeaderFooter && <Footer />}
         </div>
+        {showHeaderFooter && <StickyCTA />} {/* Add the Sticky CTA */}
         <Toaster />
       </body>
     </html>
