@@ -287,9 +287,9 @@ export default function InvoicePage() {
                                             </ul>
                                         </TableCell>
                                     </TableRow>
-                                )টিং
+                                )}
                                 </React.Fragment>
-                            ))TING
+                            ))}
                             </TableBody>
                         </Table>
                     </div>
