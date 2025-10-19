@@ -334,13 +334,14 @@ export default function InvoicePage() {
                            {invoice.myContactInfo?.split('\\n').map((line, index) => {
                                 const lowerLine = line.toLowerCase();
                                 if (lowerLine.includes('ningratwedding.id')) {
-                                    return <div key={index} className="flex items-center justify-end gap-2">{line} <Globe className="h-3 w-3" /></div>;
-                                } else if (lowerLine.includes('@')) {
-                                    return <div key={index} className="flex items-center justify-end gap-2">{line} <Mail className="h-3 w-3" /></div>;
-                                } else if (lowerLine.match(/\\d/)) {
-                                    return <div key={index} className="flex items-center justify-end gap-2">{line} <Phone className="h-3 w-3" /></div>;
+                                    return <div key={index} className="flex items-center justify-end gap-2">{line}<Globe className="h-3 w-3" /></div>;
+                                } else if (lowerLine.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$/)) {
+                                    return <div key={index} className="flex items-center justify-end gap-2">{line}<Mail className="h-3 w-3" /></div>;
+                                } else if (lowerLine.match(/\\d{6,}/)) { // Simple check for a phone number
+                                    return <div key={index} className="flex items-center justify-end gap-2">{line}<Phone className="h-3 w-3" /></div>;
                                 }
-                                return null;
+                                // Return the line without an icon if no match
+                                return <div key={index}>{line}</div>;
                            })}
                          </div>
                     </div>
