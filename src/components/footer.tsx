@@ -29,7 +29,7 @@ export default function Footer() {
     <footer className="bg-[#F8F5F1] py-8 text-sm text-gray-600">
       <div className="container mx-auto px-4">
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-center md:text-left">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
             <div>
                 <h4 className="font-semibold text-gray-800 mb-4 uppercase tracking-wider">Navigasi</h4>
                 <nav className="flex flex-col space-y-2">
@@ -37,6 +37,14 @@ export default function Footer() {
                     <Link href="/about" className="hover:text-gray-900">Tentang</Link>
                     <Link href="/contact" className="hover:text-gray-900">Hubungi kami</Link>
                 </nav>
+            </div>
+             <div>
+                <h4 className="font-semibold text-gray-800 mb-4 uppercase tracking-wider">Informasi</h4>
+                 <div className="flex flex-col space-y-2">
+                    <p>Ningrat Wedding</p>
+                    <p>Bekasi, Jawa Barat</p>
+                    <Link href="https://ningratwedding.id" className="hover:text-gray-900">ningratwedding.id</Link>
+                 </div>
             </div>
             <div>
                 <h4 className="font-semibold text-gray-800 mb-4 uppercase tracking-wider">Sosial</h4>
