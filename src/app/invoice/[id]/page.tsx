@@ -325,24 +325,13 @@ export default function InvoicePage() {
                 
                 <footer className="mt-12 p-6 sm:p-10 border-t text-xs text-muted-foreground">
                     <div className="grid sm:grid-cols-2 gap-4">
-                        <div>
+                        <div className="text-left">
                             {servicesSettings?.tagline && <p className="font-semibold italic mb-2">{servicesSettings.tagline}</p>}
                             <p>Terima kasih telah berbisnis dengan kami!</p>
                         </div>
-                        <div className="sm:text-right space-y-1">
-                            <div className="flex items-center justify-end gap-2">
-                                <p>ningratwedding.id</p>
-                                <Globe className="h-3 w-3" />
-                            </div>
-                            <div className="flex items-center justify-end gap-2">
-                                <p>contact@ningrat.com</p>
-                                <Mail className="h-3 w-3" />
-                            </div>
-                            <div className="flex items-center justify-end gap-2">
-                                <p>0812-3456-7890</p>
-                                <Phone className="h-3 w-3" />
-                            </div>
-                        </div>
+                         <div className="sm:text-right space-y-1 whitespace-pre-line">
+                           {invoice.myContactInfo}
+                         </div>
                     </div>
                 </footer>
             </div>
@@ -350,3 +339,5 @@ export default function InvoicePage() {
     </div>
   );
 }
+
+    
